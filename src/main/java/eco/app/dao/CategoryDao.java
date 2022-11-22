@@ -5,6 +5,9 @@ import eco.app.entity.Category;
 import eco.app.entity.Entity;
 import eco.app.entity.EntityHelper;
 import eco.app.helper.DatabaseHelper;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,6 +23,32 @@ public class CategoryDao extends EntityDao {
         if (!(e instanceof Category)) {
             throw new Exception("Entity is not Category");
         }
+    }
+
+    private List<Category> readResultSet(ResultSet rs) throws Exception {
+        List<Category> list = new ArrayList<>();
+        while (rs.next()) {
+            Category c = new Category();
+            c.readResultSet(rs);
+            list.add(c);
+        }
+        return list;
+    }
+
+    public List<Category> getAll() throws Exception {
+        String sql = "SELECT * FROM Category";
+        ResultSet rs = DatabaseHelper.excuteQuery(sql);
+        return readResultSet(rs);
+    }
+
+    public Category getById(int id) throws Exception {
+        String sql = "SELECT * FROM Category WHERE id = ?";
+        ResultSet rs = DatabaseHelper.excuteQuery(sql, id);
+        List<Category> list = readResultSet(rs);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
     @Override

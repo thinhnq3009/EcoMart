@@ -146,12 +146,11 @@ public class TextFieldCustom extends JTextField {
             @Override
             public void focusLost(FocusEvent e) {
                 isFocus = false;
-                if (validateText()) {
-                    validateAction.validAction();
-                } else {
-                    validateAction.invalidAction();
-                }
                 repaint();
+                if (validateAction == null) {
+                    return;
+                }
+                check();
             }
 
         });
@@ -161,7 +160,7 @@ public class TextFieldCustom extends JTextField {
     public String getRegex() {
         return reg;
     }
-    
+
     public void setContrain(String regex, boolean canEmpty) {
         setRegex(regex);
         setCanEmpty(canEmpty);
@@ -202,11 +201,7 @@ public class TextFieldCustom extends JTextField {
     }
 
     public void check() {
-        if (validateText()) {
-            validateAction.validAction();
-        } else {
-            validateAction.invalidAction();
-        }
+        check(null, null);
     }
 
     public boolean isMouseIn() {
@@ -215,5 +210,17 @@ public class TextFieldCustom extends JTextField {
 
     public void setMouseIn(boolean mouseIn) {
         this.mouseIn = mouseIn;
+    }
+
+    public void check(StringBuilder sb, String message) {
+        if (validateText()) {
+            validateAction.validAction(this);
+        } else {
+            if (sb != null) {
+                sb.append(message);
+            }
+            validateAction.invalidAction(this);
+        }
+
     }
 }

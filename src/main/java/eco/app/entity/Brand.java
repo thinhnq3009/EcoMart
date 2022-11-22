@@ -42,6 +42,14 @@ public class Brand implements Entity{
     public void setImage(byte[] image) {
         this.image = image;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+    
+    
+    
     @Override
     public void readResultSet(ResultSet rs) throws Exception {
 

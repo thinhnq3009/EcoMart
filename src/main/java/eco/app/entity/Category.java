@@ -44,6 +44,13 @@ public class Category implements Entity {
     }
 
     @Override
+    public String toString() {
+        return getName();
+    }
+    
+    
+
+    @Override
     public void readResultSet(ResultSet rs) throws Exception {
 
         /*

@@ -4,6 +4,7 @@ eco\app\dao\BrandDao.class
 eco\app\swing\TextFieldCustom$1.class
 eco\app\component\Menu.class
 eco\app\swing\PasswordFieldCustom$3.class
+eco\app\panel\ProductPanel$2.class
 eco\app\swing\shadow\RippleEffect$1.class
 eco\app\component\ProductItem$3.class
 eco\app\swing\MenuItem$3.class
@@ -24,7 +25,6 @@ eco\app\swing\TabbedPaneCustom$CustomTabbedUI.class
 eco\app\panel\MainFrom$1.class
 eco\app\dialog\Login$2.class
 eco\app\swing\PasswordFieldCustom.class
-eco\app\dialog\BillDialog$1$1.class
 eco\app\swing\MenuItem$1.class
 eco\app\dialog\Login$3.class
 eco\app\panel\ProductPanel.class
@@ -35,7 +35,6 @@ eco\app\entity\Category.class
 eco\app\dialog\MessageDialog$3.class
 eco\app\helper\MessageHelper.class
 eco\app\swing\Link$1.class
-.netbeans_automatic_build
 eco\app\component\ProductItem$1.class
 eco\app\swing\PasswordFieldCustom$2.class
 eco\app\swing\Link$2.class
@@ -73,7 +72,6 @@ eco\app\component\Header$1.class
 eco\app\component\ProductItem.class
 eco\app\dao\ManageDao.class
 eco\app\main\Main.class
-eco\app\dialog\BillDialog$1.class
 eco\app\dialog\MessageDialog$2.class
 eco\app\swing\TextFieldCustom$3.class
 eco\app\panel\CustomerPanel$4.class
@@ -96,7 +94,6 @@ eco\app\panel\CustomerPanel$3.class
 eco\app\swing\TableHeader.class
 eco\app\swing\ComboBoxCustom.class
 eco\app\swing\model\ModernScrollBarUI.class
-eco\app\dialog\BillDialog.class
 eco\app\panel\OrderPanel$3.class
 eco\app\swing\ToggleButton$2.class
 eco\app\swing\Link.class

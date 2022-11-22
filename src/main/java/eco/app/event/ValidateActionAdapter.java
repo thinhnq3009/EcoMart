@@ -11,34 +11,14 @@ import java.util.logging.Logger;
  */
 public class ValidateActionAdapter implements Cloneable {
 
-    private TextFieldCustom parentField;
-
-    public void setParentField(TextFieldCustom parentField) {
-        if (this.parentField == null) {
-            this.parentField = parentField;
-        }
+    public ValidateActionAdapter() {
     }
 
-    public TextFieldCustom getParentField() {
-        return parentField;
-    }
-
-    public ValidateActionAdapter cloneAdapter(TextFieldCustom parentField) {
-        try {
-            this.parentField = parentField;
-            return (ValidateActionAdapter) this.clone();
-        } catch (CloneNotSupportedException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public void validAction(TextFieldCustom field) {
 
     }
 
-    public void validAction() {
-
-    }
-
-    public void invalidAction() {
+    public void invalidAction(TextFieldCustom field) {
 
     }
 }

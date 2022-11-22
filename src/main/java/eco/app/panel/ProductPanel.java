@@ -5,10 +5,21 @@
 package eco.app.panel;
 
 import eco.app.component.ProductItem;
+import eco.app.dao.BrandDao;
+import eco.app.dao.CategoryDao;
+import eco.app.entity.Brand;
+import eco.app.entity.Category;
+import eco.app.entity.Product;
+import eco.app.helper.MessageHelper;
 import eco.app.helper.SaveData;
+import eco.app.helper.ShareData;
 import eco.app.swing.ScrollBarCustom;
 import eco.app.swing.TabbedPaneCustom;
 import java.awt.Color;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -16,6 +27,9 @@ import net.miginfocom.swing.MigLayout;
  * @author Lenovo
  */
 public class ProductPanel extends javax.swing.JPanel {
+    
+    private List<Category> categories;
+    private List<Brand> brands;
 
     /**
      * Creates new form OrderPanel
@@ -32,6 +46,50 @@ public class ProductPanel extends javax.swing.JPanel {
         add(pnFormProduct, "w 650!, h 100%");
         add(pnListProduct, "w 100%, h 100%");
         
+        loadComboBox();
+    }
+    
+    private Product readForm() {
+        String name = txtName.getText();
+        String price = txtPrice.getText();
+        String quantity = txtQuantity.getText();
+        String description = txtDescription.getText();
+        return null;
+    }
+    
+    private boolean validateForm(StringBuilder sb) {
+         
+        txtName.check(sb, "Name can't empty.\n");
+        txtPrice.check(sb, "Price is invalid.\n");
+        txtQuantity.check(sb, "Quantity is invalid.\n");
+        txtExpiry.check(sb, "The expiry date must be in the form (dd-MM-YYYY).\n");
+        txtDiscount.check(sb, "Discount is invalid.\n");
+        txtDescription.check(sb, "Description can't empty.\n");
+        
+        return sb.isEmpty();
+    }
+    
+    private void loadComboBox() {
+        try {
+            // Load brand
+            brands = new BrandDao().getAll();
+            DefaultComboBoxModel brandModel = new DefaultComboBoxModel();
+            for (Brand br : brands) {
+                brandModel.addElement(br);
+            }
+            cboBrand.setModel(brandModel);
+
+            // Load  category
+            categories = new CategoryDao().getAll();
+            DefaultComboBoxModel categoryModel = new DefaultComboBoxModel();
+            for (Category ct : categories) {
+                categoryModel.addElement(ct);
+            }
+            cboCategory.setModel(categoryModel);
+            
+        } catch (Exception e) {
+        }
+        
     }
 
     /**
@@ -46,41 +104,41 @@ public class ProductPanel extends javax.swing.JPanel {
         pnListProduct = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tableCustom1 = new eco.app.swing.TableCustom();
+        tblProduct = new eco.app.swing.TableCustom();
         pnFormProduct = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        textFieldCustom5 = new eco.app.swing.TextFieldCustom();
+        txtName = new eco.app.swing.TextFieldCustom();
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        textFieldCustom2 = new eco.app.swing.TextFieldCustom();
+        txtPrice = new eco.app.swing.TextFieldCustom();
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        textFieldCustom3 = new eco.app.swing.TextFieldCustom();
+        txtQuantity = new eco.app.swing.TextFieldCustom();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        textFieldCustom4 = new eco.app.swing.TextFieldCustom();
+        txtExpiry = new eco.app.swing.TextFieldCustom();
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        textFieldCustom6 = new eco.app.swing.TextFieldCustom();
+        txtDiscount = new eco.app.swing.TextFieldCustom();
         jPanel12 = new javax.swing.JPanel();
         checkBoxCustom1 = new eco.app.swing.CheckBoxCustom();
         checkBoxCustom2 = new eco.app.swing.CheckBoxCustom();
         jPanel8 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        comboBoxCustom1 = new eco.app.swing.ComboBoxCustom();
+        cboCategory = new eco.app.swing.ComboBoxCustom();
         jPanel9 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        comboBoxCustom2 = new eco.app.swing.ComboBoxCustom();
+        cboBrand = new eco.app.swing.ComboBoxCustom();
         jPanel13 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
-        textFieldCustom7 = new eco.app.swing.TextFieldCustom();
+        txtDescription = new eco.app.swing.TextFieldCustom();
         jPanel15 = new javax.swing.JPanel();
         btnNew = new eco.app.swing.ButtonRandius();
         btnInsert = new eco.app.swing.ButtonRandius();
@@ -89,7 +147,7 @@ public class ProductPanel extends javax.swing.JPanel {
         jPanel14 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtNote = new javax.swing.JTextArea();
         buttonGroup1 = new javax.swing.ButtonGroup();
 
         pnListProduct.setBackground(SaveData.BG_CONTENT     );
@@ -103,7 +161,7 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("List Product");
 
-        tableCustom1.setModel(new javax.swing.table.DefaultTableModel(
+        tblProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -114,7 +172,7 @@ public class ProductPanel extends javax.swing.JPanel {
                 "ID", "Name", "Price", "Discount", "Quantity", "Sold"
             }
         ));
-        jScrollPane1.setViewportView(tableCustom1);
+        jScrollPane1.setViewportView(tblProduct);
 
         javax.swing.GroupLayout pnListProductLayout = new javax.swing.GroupLayout(pnListProduct);
         pnListProduct.setLayout(pnListProductLayout);
@@ -131,7 +189,7 @@ public class ProductPanel extends javax.swing.JPanel {
             .addGroup(pnListProductLayout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -161,8 +219,10 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel8.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel7.add(jLabel8, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom5.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel7.add(textFieldCustom5, java.awt.BorderLayout.CENTER);
+        txtName.setCanEmpty(false);
+        txtName.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtName.setValidateAction(ShareData.validateAction);
+        jPanel7.add(txtName, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel7);
 
@@ -176,8 +236,11 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel5.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel4.add(jLabel5, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel4.add(textFieldCustom2, java.awt.BorderLayout.CENTER);
+        txtPrice.setCanEmpty(false);
+        txtPrice.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtPrice.setRegex("[0-9]+");
+        txtPrice.setValidateAction(ShareData.validateAction);
+        jPanel4.add(txtPrice, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel4);
 
@@ -191,8 +254,11 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel6.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel5.add(jLabel6, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel5.add(textFieldCustom3, java.awt.BorderLayout.CENTER);
+        txtQuantity.setCanEmpty(false);
+        txtQuantity.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtQuantity.setRegex("[0-9]+");
+        txtQuantity.setValidateAction(ShareData.validateAction);
+        jPanel5.add(txtQuantity, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel5);
 
@@ -206,8 +272,10 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel7.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel6.add(jLabel7, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel6.add(textFieldCustom4, java.awt.BorderLayout.CENTER);
+        txtExpiry.setCanEmpty(false);
+        txtExpiry.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtExpiry.setValidateAction(ShareData.validateAction);
+        jPanel6.add(txtExpiry, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel6);
 
@@ -230,8 +298,10 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel10.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel11.add(jLabel10, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom6.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel11.add(textFieldCustom6, java.awt.BorderLayout.CENTER);
+        txtDiscount.setCanEmpty(false);
+        txtDiscount.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtDiscount.setValidateAction(ShareData.validateAction);
+        jPanel11.add(txtDiscount, java.awt.BorderLayout.CENTER);
 
         jPanel12.setOpaque(false);
         jPanel12.setLayout(new java.awt.GridLayout(1, 0, 10, 0));
@@ -262,7 +332,7 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel4.setMinimumSize(new java.awt.Dimension(100, 17));
         jLabel4.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel10.add(jLabel4, java.awt.BorderLayout.LINE_START);
-        jPanel10.add(comboBoxCustom1, java.awt.BorderLayout.CENTER);
+        jPanel10.add(cboCategory, java.awt.BorderLayout.CENTER);
 
         jPanel8.add(jPanel10);
 
@@ -272,7 +342,7 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel9.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel9.setText("Brand:");
         jPanel9.add(jLabel9, java.awt.BorderLayout.LINE_START);
-        jPanel9.add(comboBoxCustom2, java.awt.BorderLayout.CENTER);
+        jPanel9.add(cboBrand, java.awt.BorderLayout.CENTER);
 
         jPanel8.add(jPanel9);
 
@@ -288,8 +358,10 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel11.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel13.add(jLabel11, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom7.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel13.add(textFieldCustom7, java.awt.BorderLayout.CENTER);
+        txtDescription.setCanEmpty(false);
+        txtDescription.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtDescription.setValidateAction(ShareData.validateAction);
+        jPanel13.add(txtDescription, java.awt.BorderLayout.CENTER);
 
         jPanel3.add(jPanel13);
 
@@ -303,6 +375,11 @@ public class ProductPanel extends javax.swing.JPanel {
         btnInsert.setBackground(SaveData.BTN_SUCCESS);
         btnInsert.setText("Insert");
         btnInsert.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        btnInsert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInsertActionPerformed(evt);
+            }
+        });
         jPanel15.add(btnInsert);
 
         btnUpdate.setBackground(SaveData.BTN_WARNING);
@@ -313,6 +390,11 @@ public class ProductPanel extends javax.swing.JPanel {
         btnDelete.setBackground(SaveData.BTN_DANGER);
         btnDelete.setText("Delete");
         btnDelete.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
         jPanel15.add(btnDelete);
 
         jPanel14.setOpaque(false);
@@ -326,9 +408,9 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel12.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel14.add(jLabel12, java.awt.BorderLayout.LINE_START);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        txtNote.setColumns(20);
+        txtNote.setRows(5);
+        jScrollPane2.setViewportView(txtNote);
 
         jPanel14.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
@@ -355,7 +437,7 @@ public class ProductPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -381,6 +463,19 @@ public class ProductPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_pnListProductComponentResized
 
+    private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
+        
+        StringBuilder sb = new StringBuilder();
+        validateForm(sb);
+        
+        MessageHelper.showMessage(null, sb.toString());
+    }//GEN-LAST:event_btnInsertActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        String a = cboCategory.getSelectedItem().toString();
+        System.out.println(cboCategory.getSelectedItem().getClass());
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private eco.app.swing.ButtonRandius btnDelete;
@@ -388,10 +483,10 @@ public class ProductPanel extends javax.swing.JPanel {
     private eco.app.swing.ButtonRandius btnNew;
     private eco.app.swing.ButtonRandius btnUpdate;
     private javax.swing.ButtonGroup buttonGroup1;
+    private eco.app.swing.ComboBoxCustom cboBrand;
+    private eco.app.swing.ComboBoxCustom cboCategory;
     private eco.app.swing.CheckBoxCustom checkBoxCustom1;
     private eco.app.swing.CheckBoxCustom checkBoxCustom2;
-    private eco.app.swing.ComboBoxCustom comboBoxCustom1;
-    private eco.app.swing.ComboBoxCustom comboBoxCustom2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -421,15 +516,15 @@ public class ProductPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPanel pnFormProduct;
     private javax.swing.JPanel pnListProduct;
-    private eco.app.swing.TableCustom tableCustom1;
-    private eco.app.swing.TextFieldCustom textFieldCustom2;
-    private eco.app.swing.TextFieldCustom textFieldCustom3;
-    private eco.app.swing.TextFieldCustom textFieldCustom4;
-    private eco.app.swing.TextFieldCustom textFieldCustom5;
-    private eco.app.swing.TextFieldCustom textFieldCustom6;
-    private eco.app.swing.TextFieldCustom textFieldCustom7;
+    private eco.app.swing.TableCustom tblProduct;
+    private eco.app.swing.TextFieldCustom txtDescription;
+    private eco.app.swing.TextFieldCustom txtDiscount;
+    private eco.app.swing.TextFieldCustom txtExpiry;
+    private eco.app.swing.TextFieldCustom txtName;
+    private javax.swing.JTextArea txtNote;
+    private eco.app.swing.TextFieldCustom txtPrice;
+    private eco.app.swing.TextFieldCustom txtQuantity;
     // End of variables declaration//GEN-END:variables
 }

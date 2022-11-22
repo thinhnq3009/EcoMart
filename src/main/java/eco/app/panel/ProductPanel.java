@@ -90,6 +90,7 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        buttonGroup1 = new javax.swing.ButtonGroup();
 
         pnListProduct.setBackground(SaveData.BG_CONTENT     );
         pnListProduct.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -235,10 +236,12 @@ public class ProductPanel extends javax.swing.JPanel {
         jPanel12.setOpaque(false);
         jPanel12.setLayout(new java.awt.GridLayout(1, 0, 10, 0));
 
+        buttonGroup1.add(checkBoxCustom1);
         checkBoxCustom1.setText("By VND");
         checkBoxCustom1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jPanel12.add(checkBoxCustom1);
 
+        buttonGroup1.add(checkBoxCustom2);
         checkBoxCustom2.setText("By %");
         checkBoxCustom2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jPanel12.add(checkBoxCustom2);
@@ -384,6 +387,7 @@ public class ProductPanel extends javax.swing.JPanel {
     private eco.app.swing.ButtonRandius btnInsert;
     private eco.app.swing.ButtonRandius btnNew;
     private eco.app.swing.ButtonRandius btnUpdate;
+    private javax.swing.ButtonGroup buttonGroup1;
     private eco.app.swing.CheckBoxCustom checkBoxCustom1;
     private eco.app.swing.CheckBoxCustom checkBoxCustom2;
     private eco.app.swing.ComboBoxCustom comboBoxCustom1;

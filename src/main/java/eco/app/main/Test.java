@@ -5,7 +5,10 @@
 package eco.app.main;
 
 import eco.app.event.LinkEventAdapter;
+import eco.app.event.ValidateActionAdapter;
 import eco.app.helper.MessageHelper;
+import eco.app.helper.ShareData;
+import eco.app.helper.ValidateHelper;
 import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
@@ -17,6 +20,10 @@ public class Test extends javax.swing.JFrame {
      */
     public Test() {
         initComponents();
+        txtCustom.setContrain("[123]+", true);
+        textFieldCustom1.setRegex("[a-z]+");
+        ValidateHelper.setValidateAction(textFieldCustom1, txtCustom);
+
     }
 
     /**
@@ -28,22 +35,58 @@ public class Test extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        txtCustom = new eco.app.swing.TextFieldCustom();
+        buttonRandius1 = new eco.app.swing.ButtonRandius();
+        textFieldCustom1 = new eco.app.swing.TextFieldCustom();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(45, 174, 253));
+
+        txtCustom.setText("textFieldCustom1");
+
+        buttonRandius1.setText("validate");
+        buttonRandius1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonRandius1ActionPerformed(evt);
+            }
+        });
+
+        textFieldCustom1.setText("textFieldCustom1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 402, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(104, 104, 104)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(buttonRandius1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCustom, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(87, 87, 87)
+                        .addComponent(textFieldCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(90, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 547, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(textFieldCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
+                .addComponent(txtCustom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(buttonRandius1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(90, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buttonRandius1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRandius1ActionPerformed
+        txtCustom.check();
+    }//GEN-LAST:event_buttonRandius1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -81,5 +124,8 @@ public class Test extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private eco.app.swing.ButtonRandius buttonRandius1;
+    private eco.app.swing.TextFieldCustom textFieldCustom1;
+    private eco.app.swing.TextFieldCustom txtCustom;
     // End of variables declaration//GEN-END:variables
 }

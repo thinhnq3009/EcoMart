@@ -44,7 +44,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="eco.app.swing.ButtonRandius" name="buttonRandius1">
+    <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius1">
       <Properties>
         <Property name="text" type="java.lang.String" value="Open"/>
         <Property name="round" type="int" value="60"/>

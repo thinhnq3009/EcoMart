@@ -47,14 +47,14 @@ public class Login extends javax.swing.JDialog {
         pnContainer = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        txtUsername = new eco.app.swing.TextFieldCustom();
-        txtPassword = new eco.app.swing.PasswordFieldCustom();
+        txtUsername = new eco.app.myswing.TextFieldCustom();
+        txtPassword = new eco.app.myswing.PasswordFieldCustom();
         jPanel3 = new javax.swing.JPanel();
-        btnLogin = new eco.app.swing.ButtonRandius();
-        btnCancel = new eco.app.swing.ButtonRandius();
-        cbRemember = new eco.app.swing.ToggleButton();
+        btnLogin = new eco.app.myswing.ButtonRandius();
+        btnCancel = new eco.app.myswing.ButtonRandius();
+        cbRemember = new eco.app.myswing.ToggleButton();
         jLabel6 = new javax.swing.JLabel();
-        link1 = new eco.app.swing.Link();
+        link1 = new eco.app.myswing.Link();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(0, 153, 51));
@@ -331,9 +331,9 @@ public class Login extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.swing.ButtonRandius btnCancel;
-    private eco.app.swing.ButtonRandius btnLogin;
-    private eco.app.swing.ToggleButton cbRemember;
+    private eco.app.myswing.ButtonRandius btnCancel;
+    private eco.app.myswing.ButtonRandius btnLogin;
+    private eco.app.myswing.ToggleButton cbRemember;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -342,10 +342,10 @@ public class Login extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private eco.app.swing.Link link1;
+    private eco.app.myswing.Link link1;
     private javax.swing.JPanel pnContainer;
     private javax.swing.JPanel pnLogin;
-    private eco.app.swing.PasswordFieldCustom txtPassword;
-    private eco.app.swing.TextFieldCustom txtUsername;
+    private eco.app.myswing.PasswordFieldCustom txtPassword;
+    private eco.app.myswing.TextFieldCustom txtUsername;
     // End of variables declaration//GEN-END:variables
 }

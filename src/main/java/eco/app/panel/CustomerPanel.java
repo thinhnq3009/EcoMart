@@ -4,6 +4,7 @@
  */
 package eco.app.panel;
 
+import eco.app.helper.NavigationHelper;
 import eco.app.helper.SaveData;
 import net.miginfocom.swing.MigLayout;
 
@@ -14,6 +15,7 @@ import net.miginfocom.swing.MigLayout;
 public class CustomerPanel extends javax.swing.JPanel {
 
     private MigLayout layout = new MigLayout("fill", "[]10[]", "0[]0");
+    private NavigationHelper nav;
 
     /**
      * Creates new form ProductPanel
@@ -25,7 +27,6 @@ public class CustomerPanel extends javax.swing.JPanel {
 
     private void init() {
 
-
         // Change background color button
         btnInsert.setBackground(SaveData.BTN_SUCCESS);
         btnUpdate.setBackground(SaveData.BTN_WARNING);
@@ -35,6 +36,17 @@ public class CustomerPanel extends javax.swing.JPanel {
         setLayout(layout);
         add(pnCustomerForm, "w 700!, h 100%");
         add(pnListCustomer, "w 100%, h 100%");
+
+        //init navigator
+        nav = new NavigationHelper(btnNew, btnInsert, btnUpdate, btnDelete);
+    }
+
+    private boolean validateForm(StringBuilder sb) {
+        txtFullname.check(sb, "Customer's fullname is empty! \n");
+        txtEmail.check(sb, "Email is empty\n");
+        txtPhone.check(sb, "Phone is incorect\n");
+        txtAddress.check(sb, "Address is empty\n");
+        return sb.isEmpty();
     }
 
     /**
@@ -48,43 +60,46 @@ public class CustomerPanel extends javax.swing.JPanel {
 
         pnListCustomer = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tableCustom1 = new eco.app.swing.TableCustom();
+        tblCustomer = new eco.app.myswing.TableCustom();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        textFieldCustom1 = new eco.app.swing.TextFieldCustom();
-        checkBoxCustom1 = new eco.app.swing.CheckBoxCustom();
-        checkBoxCustom2 = new eco.app.swing.CheckBoxCustom();
+        txtFind = new eco.app.myswing.TextFieldCustom();
+        cbFullname = new eco.app.myswing.CheckBoxCustom();
+        cbId = new eco.app.myswing.CheckBoxCustom();
         pnCustomerForm = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        textFieldCustom2 = new eco.app.swing.TextFieldCustom();
+        txtFullname = new eco.app.myswing.TextFieldCustom();
         jPanel5 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        textFieldCustom3 = new eco.app.swing.TextFieldCustom();
+        jPanel10 = new javax.swing.JPanel();
+        rdoMale = new javax.swing.JRadioButton();
+        rdoFemale = new javax.swing.JRadioButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        textFieldCustom4 = new eco.app.swing.TextFieldCustom();
+        txtEmail = new eco.app.myswing.TextFieldCustom();
         jPanel7 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        textFieldCustom5 = new eco.app.swing.TextFieldCustom();
+        txtPhone = new eco.app.myswing.TextFieldCustom();
         jPanel8 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        textFieldCustom6 = new eco.app.swing.TextFieldCustom();
+        txtAddress = new eco.app.myswing.TextFieldCustom();
         jPanel3 = new javax.swing.JPanel();
-        btnNew = new eco.app.swing.ButtonRandius();
-        btnInsert = new eco.app.swing.ButtonRandius();
-        btnUpdate = new eco.app.swing.ButtonRandius();
-        btnDelete = new eco.app.swing.ButtonRandius();
+        btnNew = new eco.app.myswing.ButtonRandius();
+        btnInsert = new eco.app.myswing.ButtonRandius();
+        btnUpdate = new eco.app.myswing.ButtonRandius();
+        btnDelete = new eco.app.myswing.ButtonRandius();
         jPanel9 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtNote = new javax.swing.JTextArea();
+        btngGender = new javax.swing.ButtonGroup();
 
         pnListCustomer.setBackground(SaveData.BG_CONTENT);
 
-        tableCustom1.setModel(new javax.swing.table.DefaultTableModel(
+        tblCustomer.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -103,34 +118,34 @@ public class CustomerPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tableCustom1);
+        jScrollPane1.setViewportView(tblCustomer);
 
         jPanel1.setOpaque(false);
 
         jLabel1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel1.setText("Search:");
 
-        textFieldCustom1.setText("Customer' s name");
-        textFieldCustom1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        textFieldCustom1.addActionListener(new java.awt.event.ActionListener() {
+        txtFind.setText("Customer' s name");
+        txtFind.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtFind.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldCustom1ActionPerformed(evt);
+                txtFindActionPerformed(evt);
             }
         });
 
-        checkBoxCustom1.setText("Fullname");
-        checkBoxCustom1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        checkBoxCustom1.addActionListener(new java.awt.event.ActionListener() {
+        cbFullname.setText("Fullname");
+        cbFullname.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        cbFullname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                checkBoxCustom1ActionPerformed(evt);
+                cbFullnameActionPerformed(evt);
             }
         });
 
-        checkBoxCustom2.setText("ID");
-        checkBoxCustom2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        checkBoxCustom2.addActionListener(new java.awt.event.ActionListener() {
+        cbId.setText("ID");
+        cbId.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        cbId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                checkBoxCustom2ActionPerformed(evt);
+                cbIdActionPerformed(evt);
             }
         });
 
@@ -142,11 +157,11 @@ public class CustomerPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(textFieldCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtFind, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(checkBoxCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbFullname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(checkBoxCustom2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27))
         );
         jPanel1Layout.setVerticalGroup(
@@ -154,10 +169,10 @@ public class CustomerPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(textFieldCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtFind, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
-                    .addComponent(checkBoxCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(checkBoxCustom2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(cbFullname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout pnListCustomerLayout = new javax.swing.GroupLayout(pnListCustomer);
@@ -201,8 +216,10 @@ public class CustomerPanel extends javax.swing.JPanel {
         jLabel4.setPreferredSize(new java.awt.Dimension(150, 17));
         jPanel4.add(jLabel4, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel4.add(textFieldCustom2, java.awt.BorderLayout.CENTER);
+        txtFullname.setCanEmpty(false);
+        txtFullname.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtFullname.setRegex("[^~]+");
+        jPanel4.add(txtFullname, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel4);
 
@@ -216,8 +233,22 @@ public class CustomerPanel extends javax.swing.JPanel {
         jLabel5.setPreferredSize(new java.awt.Dimension(150, 17));
         jPanel5.add(jLabel5, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel5.add(textFieldCustom3, java.awt.BorderLayout.CENTER);
+        jPanel10.setOpaque(false);
+        jPanel10.setLayout(new java.awt.GridLayout());
+
+        btngGender.add(rdoMale);
+        rdoMale.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        rdoMale.setText("Male");
+        rdoMale.setOpaque(false);
+        jPanel10.add(rdoMale);
+
+        btngGender.add(rdoFemale);
+        rdoFemale.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        rdoFemale.setText("Female");
+        rdoFemale.setOpaque(false);
+        jPanel10.add(rdoFemale);
+
+        jPanel5.add(jPanel10, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel5);
 
@@ -231,8 +262,9 @@ public class CustomerPanel extends javax.swing.JPanel {
         jLabel6.setPreferredSize(new java.awt.Dimension(150, 17));
         jPanel6.add(jLabel6, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel6.add(textFieldCustom4, java.awt.BorderLayout.CENTER);
+        txtEmail.setCanEmpty(false);
+        txtEmail.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel6.add(txtEmail, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel6);
 
@@ -246,8 +278,15 @@ public class CustomerPanel extends javax.swing.JPanel {
         jLabel7.setPreferredSize(new java.awt.Dimension(150, 17));
         jPanel7.add(jLabel7, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom5.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel7.add(textFieldCustom5, java.awt.BorderLayout.CENTER);
+        txtPhone.setCanEmpty(false);
+        txtPhone.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtPhone.setRegex("[0-9. ]+");
+        txtPhone.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPhoneActionPerformed(evt);
+            }
+        });
+        jPanel7.add(txtPhone, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel7);
 
@@ -261,8 +300,10 @@ public class CustomerPanel extends javax.swing.JPanel {
         jLabel8.setPreferredSize(new java.awt.Dimension(150, 17));
         jPanel8.add(jLabel8, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom6.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel8.add(textFieldCustom6, java.awt.BorderLayout.CENTER);
+        txtAddress.setCanEmpty(false);
+        txtAddress.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtAddress.setRegex("[^~]+");
+        jPanel8.add(txtAddress, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel8);
 
@@ -295,10 +336,10 @@ public class CustomerPanel extends javax.swing.JPanel {
         jLabel9.setPreferredSize(new java.awt.Dimension(150, 17));
         jPanel9.add(jLabel9, java.awt.BorderLayout.LINE_START);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        txtNote.setColumns(20);
+        txtNote.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtNote.setRows(5);
+        jScrollPane2.setViewportView(txtNote);
 
         jPanel9.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
@@ -342,26 +383,31 @@ public class CustomerPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void textFieldCustom1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldCustom1ActionPerformed
+    private void txtFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFindActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_textFieldCustom1ActionPerformed
+    }//GEN-LAST:event_txtFindActionPerformed
 
-    private void checkBoxCustom1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxCustom1ActionPerformed
+    private void cbFullnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbFullnameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_checkBoxCustom1ActionPerformed
+    }//GEN-LAST:event_cbFullnameActionPerformed
 
-    private void checkBoxCustom2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxCustom2ActionPerformed
+    private void cbIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbIdActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_checkBoxCustom2ActionPerformed
+    }//GEN-LAST:event_cbIdActionPerformed
+
+    private void txtPhoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPhoneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPhoneActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.swing.ButtonRandius btnDelete;
-    private eco.app.swing.ButtonRandius btnInsert;
-    private eco.app.swing.ButtonRandius btnNew;
-    private eco.app.swing.ButtonRandius btnUpdate;
-    private eco.app.swing.CheckBoxCustom checkBoxCustom1;
-    private eco.app.swing.CheckBoxCustom checkBoxCustom2;
+    private eco.app.myswing.ButtonRandius btnDelete;
+    private eco.app.myswing.ButtonRandius btnInsert;
+    private eco.app.myswing.ButtonRandius btnNew;
+    private eco.app.myswing.ButtonRandius btnUpdate;
+    private javax.swing.ButtonGroup btngGender;
+    private eco.app.myswing.CheckBoxCustom cbFullname;
+    private eco.app.myswing.CheckBoxCustom cbId;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -371,6 +417,7 @@ public class CustomerPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -381,15 +428,16 @@ public class CustomerPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPanel pnCustomerForm;
     private javax.swing.JPanel pnListCustomer;
-    private eco.app.swing.TableCustom tableCustom1;
-    private eco.app.swing.TextFieldCustom textFieldCustom1;
-    private eco.app.swing.TextFieldCustom textFieldCustom2;
-    private eco.app.swing.TextFieldCustom textFieldCustom3;
-    private eco.app.swing.TextFieldCustom textFieldCustom4;
-    private eco.app.swing.TextFieldCustom textFieldCustom5;
-    private eco.app.swing.TextFieldCustom textFieldCustom6;
+    private javax.swing.JRadioButton rdoFemale;
+    private javax.swing.JRadioButton rdoMale;
+    private eco.app.myswing.TableCustom tblCustomer;
+    private eco.app.myswing.TextFieldCustom txtAddress;
+    private eco.app.myswing.TextFieldCustom txtEmail;
+    private eco.app.myswing.TextFieldCustom txtFind;
+    private eco.app.myswing.TextFieldCustom txtFullname;
+    private javax.swing.JTextArea txtNote;
+    private eco.app.myswing.TextFieldCustom txtPhone;
     // End of variables declaration//GEN-END:variables
 }

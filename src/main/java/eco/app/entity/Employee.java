@@ -10,9 +10,9 @@ import java.sql.ResultSet;
  *
  * @author Lenovo
  */
-public class Employee implements Entity {
+public class Employee extends Entity {
 
-    protected int id;
+    
     protected String username;
     protected String password;
     protected String fullname;
@@ -21,18 +21,12 @@ public class Employee implements Entity {
     protected String phone;
     protected String address;
     protected int salary;
-    protected int sold_out;
+    protected int soldOut;
 
     public Employee() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+  
 
     public String getUsername() {
         return username;
@@ -98,12 +92,12 @@ public class Employee implements Entity {
         this.salary = salary;
     }
 
-    public int getSold_out() {
-        return sold_out;
+    public int getSoldOut() {
+        return soldOut;
     }
 
-    public void setSold_out(int sold_out) {
-        this.sold_out = sold_out;
+    public void setSoldOut(int soldOut) {
+        this.soldOut = soldOut;
     }
 
     @Override
@@ -119,7 +113,7 @@ public class Employee implements Entity {
          * phone
          * address
          * salary
-         * sold_out
+         * soldOut
          */
         if (rs == null) {
             throw new IllegalAccessException("ResultSet is null");
@@ -134,7 +128,7 @@ public class Employee implements Entity {
         this.phone = rs.getString("phone");
         this.address = rs.getString("address");
         this.salary = rs.getInt("salary");
-        this.sold_out = rs.getInt("sold_out");
+        this.soldOut = rs.getInt("sold_out");
 
     }
 

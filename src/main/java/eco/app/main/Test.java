@@ -40,7 +40,7 @@ public class Test extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonRandius1 = new eco.app.swing.ButtonRandius();
+        buttonRandius1 = new eco.app.myswing.ButtonRandius();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(45, 174, 253));
@@ -123,6 +123,6 @@ public class Test extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.swing.ButtonRandius buttonRandius1;
+    private eco.app.myswing.ButtonRandius buttonRandius1;
     // End of variables declaration//GEN-END:variables
 }

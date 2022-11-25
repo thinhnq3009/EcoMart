@@ -8,7 +8,7 @@ import eco.app.component.Container;
 import eco.app.component.Header;
 import eco.app.component.Menu;
 import eco.app.event.MenuEvent;
-import eco.app.swing.MenuItem;
+import eco.app.myswing.MenuItem;
 import eco.app.swing.model.MenuModel;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;

@@ -10,22 +10,15 @@ import java.sql.ResultSet;
  *
  * @author Lenovo
  */
-public class Brand implements Entity{
+public class Brand extends Entity{
 
-    protected int id;
     protected String name;
     protected byte[] image;
 
     public Brand() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+  
 
     public String getName() {
         return name;

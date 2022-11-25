@@ -7,6 +7,7 @@ package eco.app.panel;
 import eco.app.dao.BrandDao;
 import eco.app.dao.CategoryDao;
 import eco.app.dao.ProductDao;
+import eco.app.dialog.MessageDialog.MessageType;
 import eco.app.entity.Brand;
 import eco.app.entity.Category;
 import eco.app.entity.EntityHelper;
@@ -28,45 +29,66 @@ import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
-import static eco.app.helper.DateHeper.*;
-import eco.app.swing.MyChooser;
+import static eco.app.helper.Convertor.*;
+import eco.app.helper.NavigationHelper;
+import eco.app.myswing.MyChooser;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import eco.app.helper.Convertor;
 
 /**
  *
  * @author Lenovo
  */
 public class ProductPanel extends javax.swing.JPanel {
-
+    
     private List<Category> categories;
     private List<Brand> brands;
     private List<Product> products;
-
+    private NavigationHelper nav;
     private byte[] imageSelected;
+    private int idProductSelected;
+    private byte[] imageDefault;
 
     /**
      * Creates new form OrderPanel
      */
     private final MigLayout layout = new MigLayout("fill", "0[]10[]0", "0[]0");
-
+    
     public ProductPanel() {
+        
         initComponents();
         init();
     }
-
+    
     private void init() {
         setLayout(layout);
         add(pnFormProduct, "w 650!, h 100%");
         add(pnListProduct, "w 100%, h 100%");
 
-        // 
+        //
         loadComboBox();
         initAutoFill();
         fillTable();
-
+        
+        nav = new NavigationHelper(btnNew, btnInsert, btnUpdate, btnDelete);
+        initDefaultImage();
+        
     }
-
+    
+    private void initDefaultImage() {
+        try {
+            ImageIcon icon = new ImageIcon(getClass().getResource("/eco/app/icon/temp-product-item.png"));
+            Image image = icon.getImage();
+            imageDefault = ImageHelper.imageToByte(image, "png");
+        } catch (IOException ex) {
+            Logger.getLogger(ProductPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     private void clearForm() {
         txtName.setText("");
         txtPrice.setText("");
@@ -87,19 +109,18 @@ public class ProductPanel extends javax.swing.JPanel {
         txtDescription.runValid();
         txtDiscount.runValid();
         txtExpiry.runValid();
-
-
+        
     }
-
+    
     private void fillTable() {
         try {
             ProductDao dao = new ProductDao();
             products = dao.getAll();
-
+            
             DefaultTableModel model = (DefaultTableModel) tblProduct.getModel();
-
+            
             model.setRowCount(0);
-
+            
             for (Product p : products) {
                 model.addRow(EntityHelper.getData(p,
                         "id",
@@ -113,12 +134,12 @@ public class ProductPanel extends javax.swing.JPanel {
             MessageHelper.showException(this, e);
         }
     }
-
+    
     private Product readForm(StringBuilder sb) throws Exception {
         if (!validateForm(sb)) {
             throw new Exception("Invalid input data");
         }
-
+        
         String name = txtName.getText();
         int price = Integer.parseInt(txtPrice.getText());
         double discount = Double.parseDouble(txtDiscount.getText());
@@ -128,7 +149,7 @@ public class ProductPanel extends javax.swing.JPanel {
         Category category = (Category) cbCategory.getSelectedItem();
         Brand brand = (Brand) cbBrand.getSelectedItem();
         String note = txtNote.getText();
-
+        
         Product product = new Product();
         product.setName(name);
         product.setPrice(price);
@@ -139,22 +160,29 @@ public class ProductPanel extends javax.swing.JPanel {
         product.setExpiry(date);
         product.setCategoryId(category.getId());
         product.setBrandId(brand.getId());
-        product.setImage(imageSelected);
+        product.setImage(imageSelected == null ? imageDefault : imageSelected);
         product.setDescription(description);
         product.setNote(note);
+        
         return product;
-
+        
     }
-
+    
     private void fillForm(Product product) {
+        idProductSelected = product.getId();
         txtName.setText(product.getName());
         txtPrice.setText(product.getPrice() + "");
         txtDiscount.setText(product.getDiscount() + "");
         txtQuantity.setText(product.getQuantity() + "");
         txtDescription.setText(product.getDescription());
         txtExpiry.setText(dateToString(product.getExpiry()));
-        cbCategory.setSelectedItem(product.getCategory());
-        cbBrand.setSelectedItem(product.getBrand());
+        txtNote.setText(product.getNote());
+        
+        Brand brand = (Brand) EntityHelper.find(brands, product.getBrandId());
+        Category category = (Category) EntityHelper.find(categories, product.getCategoryId());
+        cbBrand.setSelectedItem(brand);
+        cbCategory.setSelectedItem(category);
+        
         imageSelected = product.getImage();
         try {
             Image image = ImageHelper.createImage(imageSelected, "png");
@@ -170,20 +198,21 @@ public class ProductPanel extends javax.swing.JPanel {
                 MessageHelper.showException(this, e);
             }
         }
+        nav.isEditMode();
     }
-
+    
     private boolean validateForm(StringBuilder sb) {
-
+        
         txtName.check(sb, "Name can't empty.\n");
         txtPrice.check(sb, "Price is invalid.\n");
         txtQuantity.check(sb, "Quantity is invalid.\n");
         txtExpiry.check(sb, "The expiry date must be in the form (dd/MM/YYYY).\n");
         txtDiscount.check(sb, "Discount is invalid.\n");
         txtDescription.check(sb, "Description can't empty.\n");
-
+        
         return sb.isEmpty();
     }
-
+    
     private void loadComboBox() {
         try {
             // Load brand
@@ -194,72 +223,72 @@ public class ProductPanel extends javax.swing.JPanel {
             }
             cbBrand.setModel(brandModel);
 
-            // Load  category
+            // Load category
             categories = new CategoryDao().getAll();
             DefaultComboBoxModel categoryModel = new DefaultComboBoxModel();
             for (Category ct : categories) {
                 categoryModel.addElement(ct);
             }
             cbCategory.setModel(categoryModel);
-
+            
         } catch (Exception e) {
         }
-
+        
     }
-
+    
     private void initAutoFill() {
 
         /*
-        auto fill expiry
+         * auto fill expiry
          */
         txtExpiry.setText(todayString());
-
+        
         txtExpiry.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-
+                    
                     try {
-
+                        
                         Date oldDate = stringToDate(txtExpiry.getText());
-
+                        
                         txtExpiry.setText(dateToString(plusDate(oldDate, 5, 1)));
-
+                        
                     } catch (Exception ex) {
                         ex.printStackTrace();
-
+                        
                         txtExpiry.setText(todayString());
-
+                        
                     }
-
+                    
                     return;
-
+                    
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-
+                    
                     try {
-
+                        
                         Date oldDate = stringToDate(txtExpiry.getText());
-
+                        
                         txtExpiry.setText(dateToString(plusDate(oldDate, 5, -1)));
-
+                        
                     } catch (Exception ex) {
                         ex.printStackTrace();
-
+                        
                         txtExpiry.setText(todayString());
-
+                        
                     }
-
+                    
                     return;
-
+                    
                 }
-
+                
             }
-
+            
         });
 
         /*
-        auto select discount
+         * auto select discount
          */
         txtDiscount.addFocusListener(new FocusAdapter() {
             @Override
@@ -271,26 +300,29 @@ public class ProductPanel extends javax.swing.JPanel {
                     cbByPercent.setSelected(true);
                 }
             }
-
+            
         });
 
         /*
-        Auto fill Description
+         * Auto fill Description
          */
         txtDescription.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                
                 String name = txtName.getText();
-                String price = txtPrice.getText();
+                String price = Convertor.toCurency(txtPrice.getText());
                 String brand = cbBrand.getSelectedItem().toString();
                 String category = cbCategory.getSelectedItem().toString();
-                // Name: 10000VND  [Brand] - [Category]
-                String description = name + ": " + price + "VND  [" + brand + "] - [" + category + "]";
+
+                // name: <10.000VND> [Brand] - [Category]
+                String description = name + ": <" + price + "VND> [" + brand + "] - [" + category + "]";
+                
                 txtDescription.setText(description);
                 txtDescription.selectAll();
-
+                
             }
-
+            
         });
     }
 
@@ -300,56 +332,57 @@ public class ProductPanel extends javax.swing.JPanel {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         pnListProduct = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblProduct = new eco.app.swing.TableCustom();
-        txtFindItem = new eco.app.swing.TextFieldCustom();
-        btnReload = new eco.app.swing.ButtonRandius();
-        cbByName = new eco.app.swing.CheckBoxCustom();
-        cbByID = new eco.app.swing.CheckBoxCustom();
+        tblProduct = new eco.app.myswing.TableCustom();
+        txtFindItem = new eco.app.myswing.TextFieldCustom();
+        btnReload = new eco.app.myswing.ButtonRandius();
+        cbByName = new eco.app.myswing.CheckBoxCustom();
+        cbByID = new eco.app.myswing.CheckBoxCustom();
         pnFormProduct = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         lblImage = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        txtName = new eco.app.swing.TextFieldCustom();
+        txtName = new eco.app.myswing.TextFieldCustom();
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        txtPrice = new eco.app.swing.TextFieldCustom();
+        txtPrice = new eco.app.myswing.TextFieldCustom();
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        txtQuantity = new eco.app.swing.TextFieldCustom();
+        txtQuantity = new eco.app.myswing.TextFieldCustom();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        txtExpiry = new eco.app.swing.TextFieldCustom();
+        txtExpiry = new eco.app.myswing.TextFieldCustom();
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        txtDiscount = new eco.app.swing.TextFieldCustom();
+        txtDiscount = new eco.app.myswing.TextFieldCustom();
         jPanel12 = new javax.swing.JPanel();
-        cbByVND = new eco.app.swing.CheckBoxCustom();
-        cbByPercent = new eco.app.swing.CheckBoxCustom();
+        cbByVND = new eco.app.myswing.CheckBoxCustom();
+        cbByPercent = new eco.app.myswing.CheckBoxCustom();
         jPanel8 = new javax.swing.JPanel();
-        jPanel10 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        cbCategory = new eco.app.swing.ComboBoxCustom();
         jPanel9 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        cbBrand = new eco.app.swing.ComboBoxCustom();
+        cbBrand = new eco.app.myswing.ComboBoxCustom();
+        jPanel10 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        cbCategory = new eco.app.myswing.ComboBoxCustom();
         jPanel13 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
-        txtDescription = new eco.app.swing.TextFieldCustom();
+        txtDescription = new eco.app.myswing.TextFieldCustom();
         jPanel15 = new javax.swing.JPanel();
-        btnNew = new eco.app.swing.ButtonRandius();
-        btnInsert = new eco.app.swing.ButtonRandius();
-        btnUpdate = new eco.app.swing.ButtonRandius();
-        btnDelete = new eco.app.swing.ButtonRandius();
+        btnNew = new eco.app.myswing.ButtonRandius();
+        btnInsert = new eco.app.myswing.ButtonRandius();
+        btnUpdate = new eco.app.myswing.ButtonRandius();
+        btnDelete = new eco.app.myswing.ButtonRandius();
         jPanel14 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -620,32 +653,35 @@ public class ProductPanel extends javax.swing.JPanel {
         jPanel8.setOpaque(false);
         jPanel8.setLayout(new java.awt.GridLayout(1, 2, 15, 0));
 
-        jPanel10.setOpaque(false);
-        jPanel10.setLayout(new java.awt.BorderLayout(10, 0));
-
-        jLabel4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jLabel4.setText("Category: ");
-        jLabel4.setMaximumSize(new java.awt.Dimension(100, 17));
-        jLabel4.setMinimumSize(new java.awt.Dimension(100, 17));
-        jLabel4.setPreferredSize(new java.awt.Dimension(100, 17));
-        jPanel10.add(jLabel4, java.awt.BorderLayout.LINE_START);
-
-        cbCategory.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel10.add(cbCategory, java.awt.BorderLayout.CENTER);
-
-        jPanel8.add(jPanel10);
-
         jPanel9.setOpaque(false);
         jPanel9.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel9.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel9.setText("Brand:");
+        jLabel9.setMaximumSize(new java.awt.Dimension(100, 17));
+        jLabel9.setMinimumSize(new java.awt.Dimension(100, 17));
+        jLabel9.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel9.add(jLabel9, java.awt.BorderLayout.LINE_START);
 
         cbBrand.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jPanel9.add(cbBrand, java.awt.BorderLayout.CENTER);
 
         jPanel8.add(jPanel9);
+
+        jPanel10.setOpaque(false);
+        jPanel10.setLayout(new java.awt.BorderLayout(10, 0));
+
+        jLabel4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jLabel4.setText("Category: ");
+        jLabel4.setMaximumSize(new java.awt.Dimension(90, 17));
+        jLabel4.setMinimumSize(new java.awt.Dimension(90, 17));
+        jLabel4.setPreferredSize(new java.awt.Dimension(90, 17));
+        jPanel10.add(jLabel4, java.awt.BorderLayout.LINE_START);
+
+        cbCategory.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel10.add(cbCategory, java.awt.BorderLayout.CENTER);
+
+        jPanel8.add(jPanel10);
 
         jPanel3.add(jPanel8);
 
@@ -693,6 +729,11 @@ public class ProductPanel extends javax.swing.JPanel {
         btnUpdate.setText("Update");
         btnUpdate.setEnabled(false);
         btnUpdate.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
         jPanel15.add(btnUpdate);
 
         btnDelete.setBackground(SaveData.BTN_DANGER);
@@ -766,80 +807,107 @@ public class ProductPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void pnListProductComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pnListProductComponentResized
+    private void pnListProductComponentResized(java.awt.event.ComponentEvent evt) {// GEN-FIRST:event_pnListProductComponentResized
         if (pnListProduct.getWidth() <= 300) {
-//            changeLayout();
+            // changeLayout();
         }
-    }//GEN-LAST:event_pnListProductComponentResized
+    }// GEN-LAST:event_pnListProductComponentResized
 
-    private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
+    private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnInsertActionPerformed
         StringBuilder sb = new StringBuilder();
         try {
             
             ProductDao dao = new ProductDao();
-
+            
             if (dao.insert(readForm(sb))) {
-                System.out.println("Thêm sản phẩm thành công");
-
+                MessageHelper.showMessage(this, "Thêm mới sản phẩm thành công");
+                
             } else {
-                System.out.println("Thêm sản phẩm thất bại");
+                MessageHelper.showMessage(this, "Thêm mới sản phẩm thát bại");
             }
         } catch (Exception e) {
-            MessageHelper.showException(this, e);
+            e.printStackTrace();
+            sb.append(e.getMessage());
+            MessageHelper.showErrorMessage(this, sb.toString());
         }
-
+        
         fillTable();
-    }//GEN-LAST:event_btnInsertActionPerformed
+    }// GEN-LAST:event_btnInsertActionPerformed
 
-    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        String a = cbCategory.getSelectedItem().toString();
-        System.out.println(cbCategory.getSelectedItem().getClass());
-    }//GEN-LAST:event_btnDeleteActionPerformed
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnDeleteActionPerformed
+        StringBuilder sb = new StringBuilder();
+        try {
+            
+            ProductDao dao = new ProductDao();
+            Product product = readForm(sb);
+            product.setId(idProductSelected);
+            
+            MessageType option = MessageHelper.showConfirm(this, "Do you want delete \n" + product.getDescription());
+            
+            if (option != MessageType.YES) {
+                return;
+            }
 
-    private void lblImageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblImageMouseClicked
+            
+            if (dao.delete(product)) {
+                System.out.println("Xoá sản phẩm thành công");
+                
+            } else {
+                System.out.println("Xoá sản phẩm thất bại");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            MessageHelper.showErrorMessage(this, sb.toString());
+        }
+        
+        fillTable();
+        clearForm();
+    }// GEN-LAST:event_btnDeleteActionPerformed
+
+    private void lblImageMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblImageMouseClicked
 
         MyChooser chooser = new MyChooser();
-
+        
         chooser.addFilter("Hình ảnh (.png, .jpg)", "png", "jpg");
         chooser.addFilter("All file", "*");
-
+        
         boolean option = chooser.showOpenDialog(this);
         if (!option) {
             return;
         }
-
+        
         File f = chooser.getSelectedFile();
         Image image = new ImageIcon(f.getPath()).getImage();
         lblImage.setIcon(new ImageIcon(ImageHelper.resize(image)));
-
+        
         try {
             imageSelected = ImageHelper.imageToByte(image, "png");
         } catch (Exception e) {
-
+            
         }
+        
+    }// GEN-LAST:event_lblImageMouseClicked
 
-    }//GEN-LAST:event_lblImageMouseClicked
-
-    private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
+    private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnReloadActionPerformed
         fillTable();
-    }//GEN-LAST:event_btnReloadActionPerformed
+    }// GEN-LAST:event_btnReloadActionPerformed
 
-    private void txtFindItemKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFindItemKeyPressed
+    private void txtFindItemKeyPressed(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtFindItemKeyPressed
 
-    }//GEN-LAST:event_txtFindItemKeyPressed
+    }// GEN-LAST:event_txtFindItemKeyPressed
 
-    private void txtFindItemFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFindItemFocusGained
+    private void txtFindItemFocusGained(java.awt.event.FocusEvent evt) {// GEN-FIRST:event_txtFindItemFocusGained
         txtFindItem.selectAll();
-    }//GEN-LAST:event_txtFindItemFocusGained
+    }// GEN-LAST:event_txtFindItemFocusGained
 
-    private void txtFindItemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFindItemKeyReleased
+    private void txtFindItemKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtFindItemKeyReleased
 
         String key = txtFindItem.getText().toLowerCase();
-
+        
         DefaultTableModel model = (DefaultTableModel) tblProduct.getModel();
-
+        
         model.setRowCount(0);
-
+        
         for (Product product : products) {
             String name = product.getName().toLowerCase();
             String id = String.valueOf(product.getId());
@@ -863,41 +931,63 @@ public class ProductPanel extends javax.swing.JPanel {
                         "sold"));
             }
         }
-    }//GEN-LAST:event_txtFindItemKeyReleased
+    }// GEN-LAST:event_txtFindItemKeyReleased
 
-    private void cbByIDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbByIDMouseClicked
+    private void cbByIDMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_cbByIDMouseClicked
         txtFindItemKeyReleased(null);
-    }//GEN-LAST:event_cbByIDMouseClicked
+    }// GEN-LAST:event_cbByIDMouseClicked
 
-    private void cbByNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbByNameMouseClicked
+    private void cbByNameMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_cbByNameMouseClicked
         txtFindItemKeyReleased(null);
-    }//GEN-LAST:event_cbByNameMouseClicked
+    }// GEN-LAST:event_cbByNameMouseClicked
 
-    private void tblProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductMouseClicked
+    private void tblProductMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_tblProductMouseClicked
         if (evt.getClickCount() == 2) {
             int index = tblProduct.getSelectedRow();
-            Product product = products.get(index);
+            int id = (int) tblProduct.getValueAt(index, 0);
+            Product product = (Product) EntityHelper.find(products, id);
             fillForm(product);
         }
-    }//GEN-LAST:event_tblProductMouseClicked
+    }// GEN-LAST:event_tblProductMouseClicked
 
-    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnNewActionPerformed
         clearForm();
-    }//GEN-LAST:event_btnNewActionPerformed
+    }// GEN-LAST:event_btnNewActionPerformed
 
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnUpdateActionPerformed
+        StringBuilder sb = new StringBuilder();
+        try {
+            
+            ProductDao dao = new ProductDao();
+            Product product = readForm(sb);
+            product.setId(idProductSelected);
+            if (dao.update(product)) {
+                System.out.println("Cập nhật sản phẩm thành công");
+                
+            } else {
+                System.out.println("Cập nhật sản phẩm thất bại");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            MessageHelper.showErrorMessage(this, sb.toString());
+        }
+        
+        fillTable();
+        
+    }// GEN-LAST:event_btnUpdateActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.swing.ButtonRandius btnDelete;
-    private eco.app.swing.ButtonRandius btnInsert;
-    private eco.app.swing.ButtonRandius btnNew;
-    private eco.app.swing.ButtonRandius btnReload;
-    private eco.app.swing.ButtonRandius btnUpdate;
-    private eco.app.swing.ComboBoxCustom cbBrand;
-    private eco.app.swing.CheckBoxCustom cbByID;
-    private eco.app.swing.CheckBoxCustom cbByName;
-    private eco.app.swing.CheckBoxCustom cbByPercent;
-    private eco.app.swing.CheckBoxCustom cbByVND;
-    private eco.app.swing.ComboBoxCustom cbCategory;
+    private eco.app.myswing.ButtonRandius btnDelete;
+    private eco.app.myswing.ButtonRandius btnInsert;
+    private eco.app.myswing.ButtonRandius btnNew;
+    private eco.app.myswing.ButtonRandius btnReload;
+    private eco.app.myswing.ButtonRandius btnUpdate;
+    private eco.app.myswing.ComboBoxCustom cbBrand;
+    private eco.app.myswing.CheckBoxCustom cbByID;
+    private eco.app.myswing.CheckBoxCustom cbByName;
+    private eco.app.myswing.CheckBoxCustom cbByPercent;
+    private eco.app.myswing.CheckBoxCustom cbByVND;
+    private eco.app.myswing.ComboBoxCustom cbCategory;
     private javax.swing.ButtonGroup gbtnDiscount;
     private javax.swing.ButtonGroup gbtnFindItem;
     private javax.swing.JLabel jLabel10;
@@ -931,15 +1021,15 @@ public class ProductPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblImage;
     private javax.swing.JPanel pnFormProduct;
     private javax.swing.JPanel pnListProduct;
-    private eco.app.swing.TableCustom tblProduct;
-    private eco.app.swing.TextFieldCustom txtDescription;
-    private eco.app.swing.TextFieldCustom txtDiscount;
-    private eco.app.swing.TextFieldCustom txtExpiry;
-    private eco.app.swing.TextFieldCustom txtFindItem;
-    private eco.app.swing.TextFieldCustom txtName;
+    private eco.app.myswing.TableCustom tblProduct;
+    private eco.app.myswing.TextFieldCustom txtDescription;
+    private eco.app.myswing.TextFieldCustom txtDiscount;
+    private eco.app.myswing.TextFieldCustom txtExpiry;
+    private eco.app.myswing.TextFieldCustom txtFindItem;
+    private eco.app.myswing.TextFieldCustom txtName;
     private javax.swing.JTextArea txtNote;
-    private eco.app.swing.TextFieldCustom txtPrice;
-    private eco.app.swing.TextFieldCustom txtQuantity;
+    private eco.app.myswing.TextFieldCustom txtPrice;
+    private eco.app.myswing.TextFieldCustom txtQuantity;
     // End of variables declaration//GEN-END:variables
 
 }

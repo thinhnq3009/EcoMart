@@ -48,7 +48,7 @@ public class BillPanel extends javax.swing.JPanel {
         jLabel11 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tableCustom1 = new eco.app.swing.TableCustom();
+        tableCustom1 = new eco.app.myswing.TableCustom();
         jPanel8 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
@@ -318,6 +318,6 @@ public class BillPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private eco.app.swing.TableCustom tableCustom1;
+    private eco.app.myswing.TableCustom tableCustom1;
     // End of variables declaration//GEN-END:variables
 }

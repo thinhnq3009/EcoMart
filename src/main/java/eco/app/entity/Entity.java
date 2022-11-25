@@ -10,6 +10,18 @@ import java.sql.ResultSet;
  *
  * @author Lenovo
  */
-public interface Entity {
-    public void readResultSet(ResultSet rs) throws Exception;
+public abstract class Entity {
+
+    protected int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public abstract void readResultSet(ResultSet rs) throws Exception;
+
 }

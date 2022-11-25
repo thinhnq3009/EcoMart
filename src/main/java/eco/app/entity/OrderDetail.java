@@ -10,9 +10,9 @@ import java.sql.ResultSet;
  *
  * @author Lenovo
  */
-public class OrderDetail implements Entity {
+public class OrderDetail extends Entity {
 
-    protected int id;
+    
     protected int orderId;
     protected int productId;
     protected int quantity;
@@ -21,13 +21,7 @@ public class OrderDetail implements Entity {
     public OrderDetail() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+  
 
     public int getOrderId() {
         return orderId;

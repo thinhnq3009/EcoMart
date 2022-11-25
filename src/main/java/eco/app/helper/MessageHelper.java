@@ -48,6 +48,13 @@ public class MessageHelper {
         dialog.setIcon(new ImageHelper().openImage("message.png"));
         dialog.setVisible(true);
         e.printStackTrace();
-       
+    }
+
+    public static void showErrorMessage(Component component, String message) {
+        MessageDialog dialog = openDialog(component);
+        dialog.setText(message);
+        dialog.hidenButton(DialogButton.BTN_NO, DialogButton.BTN_CANCEL);
+        dialog.setIcon(new ImageHelper().openImage("message.png"));
+        dialog.setVisible(true);
     }
 }

@@ -233,7 +233,7 @@
                         <Property name="text" type="java.lang.String" value="Password:"/>
                       </Properties>
                     </Component>
-                    <Component class="eco.app.swing.TextFieldCustom" name="txtUsername">
+                    <Component class="eco.app.myswing.TextFieldCustom" name="txtUsername">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="thinh"/>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -244,7 +244,7 @@
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtUsernameKeyReleased"/>
                       </Events>
                     </Component>
-                    <Component class="eco.app.swing.PasswordFieldCustom" name="txtPassword">
+                    <Component class="eco.app.myswing.PasswordFieldCustom" name="txtPassword">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="123"/>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -269,7 +269,7 @@
                     <Property name="rows" type="int" value="1"/>
                   </Layout>
                   <SubComponents>
-                    <Component class="eco.app.swing.ButtonRandius" name="btnLogin">
+                    <Component class="eco.app.myswing.ButtonRandius" name="btnLogin">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Login"/>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -280,7 +280,7 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLoginActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="eco.app.swing.ButtonRandius" name="btnCancel">
+                    <Component class="eco.app.myswing.ButtonRandius" name="btnCancel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Cancel"/>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -293,7 +293,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Container class="eco.app.swing.ToggleButton" name="cbRemember">
+                <Container class="eco.app.myswing.ToggleButton" name="cbRemember">
                   <Properties>
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="66" red="66" type="rgb"/>
@@ -313,7 +313,7 @@
                     <Property name="text" type="java.lang.String" value="Remember me"/>
                   </Properties>
                 </Component>
-                <Component class="eco.app.swing.Link" name="link1">
+                <Component class="eco.app.myswing.Link" name="link1">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Forgot password ? "/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">

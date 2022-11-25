@@ -5,7 +5,6 @@ import eco.app.entity.EntityHelper;
 import eco.app.entity.Product;
 import eco.app.helper.DatabaseHelper;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,7 +91,11 @@ public class ProductDao extends EntityDao {
                 + " sold = ?,"
                 + " discount = ?,"
                 + " time_add = ?,"
-                + " expiry = ?"
+                + " expiry = ?,"
+                + " price = ?,"
+                + " description = ?,"
+                + " image = ?,"
+                + " note = ?"
                 + " WHERE id = ?";
         Object[] obj = EntityHelper.getData(e,
                 "categoryId",
@@ -104,7 +107,12 @@ public class ProductDao extends EntityDao {
                 "discount",
                 "timeAdd",
                 "expiry",
+                "price",
+                "description",
+                "image",
+                "note",
                 "id");
+        System.out.println(getClass().getName() + obj.length);
         return DatabaseHelper.excuteUpdate(sql, obj);
     }
 
@@ -134,7 +142,6 @@ public class ProductDao extends EntityDao {
                 "image",
                 "description",
                 "note");
-        System.out.println(Arrays.toString(obj));
         return DatabaseHelper.excuteUpdate(sql, obj);
     }
 

@@ -77,7 +77,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="eco.app.swing.TextFieldCustom" name="textFieldCustom1">
+            <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Search product"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -85,7 +85,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="eco.app.swing.ButtonRandius" name="buttonRandius1">
+            <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Search"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -111,9 +111,9 @@
                 <Property name="text" type="java.lang.String" value="Category: "/>
               </Properties>
             </Component>
-            <Component class="eco.app.swing.ComboBoxCustom" name="comboBoxCustom1">
+            <Component class="eco.app.myswing.ComboBoxCustom" name="comboBoxCustom1">
             </Component>
-            <Component class="eco.app.swing.ComboBoxCustom" name="cboBrand">
+            <Component class="eco.app.myswing.ComboBoxCustom" name="cboBrand">
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboBrandActionPerformed"/>
               </Events>
@@ -210,7 +210,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="eco.app.swing.TableCustom" name="tableCustom1">
+            <Component class="eco.app.myswing.TableCustom" name="tableCustom1">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="4" rowCount="4">
@@ -271,7 +271,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="eco.app.swing.TextFieldCustom" name="textFieldCustom2">
+                <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom2">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="Nguyen Van A"/>
@@ -318,7 +318,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="eco.app.swing.TextFieldCustom" name="textFieldCustom3">
+                <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom3">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="SELL50%"/>
@@ -365,7 +365,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="eco.app.swing.TextFieldCustom" name="textFieldCustom4">
+                <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom4">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="-30.000 VND"/>
@@ -415,7 +415,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="eco.app.swing.TextFieldCustom" name="textFieldCustom5">
+                <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom5">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="149.699 VND"/>
@@ -443,7 +443,7 @@
             <Property name="rows" type="int" value="1"/>
           </Layout>
           <SubComponents>
-            <Component class="eco.app.swing.ButtonRandius" name="buttonRandius2">
+            <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius2">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="SaveData.BTN_DANGER" type="code"/>
@@ -454,7 +454,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="eco.app.swing.ButtonRandius" name="buttonRandius3">
+            <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius3">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="SaveData.BTN_WARNING&#xa;" type="code"/>
@@ -465,7 +465,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="eco.app.swing.ButtonRandius" name="buttonRandius4">
+            <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius4">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="SaveData.BTN_SUCCESS" type="code"/>

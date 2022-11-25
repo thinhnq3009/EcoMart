@@ -7,7 +7,6 @@ package eco.app.dao;
 import eco.app.entity.Employee;
 import eco.app.entity.Entity;
 import eco.app.entity.EntityHelper;
-import eco.app.entity.Manage;
 import eco.app.helper.DatabaseHelper;
 import java.sql.ResultSet;
 import java.util.ArrayList;

@@ -11,10 +11,10 @@ import java.util.Date;
  *
  * @author Lenovo
  */
-public class Voucher implements Entity {
+public class Voucher extends Entity {
 
-    protected int id;
-    protected int manageId;
+    
+    protected int employeeId;
     protected String code;
     protected int maxDiscount;
     protected int minApply;
@@ -23,20 +23,14 @@ public class Voucher implements Entity {
     protected boolean isUsed;
     protected Date expiry;
 
-    public int getId() {
-        return id;
+  
+
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getManageId() {
-        return manageId;
-    }
-
-    public void setManageId(int manageId) {
-        this.manageId = manageId;
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getCode() {
@@ -111,7 +105,7 @@ public class Voucher implements Entity {
             throw new IllegalArgumentException("ResultSet is null");
         }
 
-        this.setManageId(rs.getInt("manage_id"));
+        this.setEmployeeId(rs.getInt("manage_id"));
         this.setCode(rs.getString("code"));
         this.setMaxDiscount(rs.getInt("max_discount"));
         this.setMinApply(rs.getInt("min_apply"));

@@ -10,21 +10,12 @@ import java.sql.ResultSet;
  *
  * @author Lenovo
  */
-public class Category implements Entity {
+public class Category extends Entity {
 
-    protected int id;
     protected String name;
     protected byte[] image;
 
     public Category() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -47,8 +38,6 @@ public class Category implements Entity {
     public String toString() {
         return getName();
     }
-    
-    
 
     @Override
     public void readResultSet(ResultSet rs) throws Exception {

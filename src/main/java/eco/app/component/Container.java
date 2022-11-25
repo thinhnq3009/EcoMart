@@ -6,11 +6,11 @@ package eco.app.component;
 
 import eco.app.helper.ImageHelper;
 import eco.app.panel.CustomerPanel;
-import eco.app.swing.ButtonRandius;
+import eco.app.myswing.ButtonRandius;
 import net.miginfocom.swing.MigLayout;
 import eco.app.panel.OrderPanel;
 import eco.app.panel.ProductPanel;
-import eco.app.swing.TabbedPaneCustom;
+import eco.app.myswing.TabbedPaneCustom;
 import java.awt.Component;
 import java.awt.Font;
 import javax.swing.ImageIcon;

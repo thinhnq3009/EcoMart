@@ -13,9 +13,9 @@ import java.util.Date;
  *
  * @author Lenovo
  */
-public class Product implements Entity {
+public class Product extends Entity {
 
-    protected int id;
+    
     protected int categoryId;
     protected int employeeId;
     protected int brandId;
@@ -54,13 +54,7 @@ public class Product implements Entity {
         }
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+  
 
     public int getCategoryId() {
         return categoryId;

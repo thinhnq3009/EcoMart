@@ -4,8 +4,8 @@
  */
 package eco.app.component;
 
-import eco.app.swing.MenuItem;
-import eco.app.swing.ScrollBarCustom;
+import eco.app.myswing.MenuItem;
+import eco.app.myswing.ScrollBarCustom;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;

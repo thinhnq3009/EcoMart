@@ -6,8 +6,8 @@ package eco.app.panel;
 
 import eco.app.component.ProductItem;
 import eco.app.helper.SaveData;
-import eco.app.swing.ScrollBarCustom;
-import eco.app.swing.TabbedPaneCustom;
+import eco.app.myswing.ScrollBarCustom;
+import eco.app.myswing.TabbedPaneCustom;
 import java.awt.Color;
 import net.miginfocom.swing.MigLayout;
 
@@ -73,35 +73,35 @@ public class OrderPanel extends javax.swing.JPanel {
 
         pnFindProduct = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        textFieldCustom1 = new eco.app.swing.TextFieldCustom();
-        buttonRandius1 = new eco.app.swing.ButtonRandius();
+        textFieldCustom1 = new eco.app.myswing.TextFieldCustom();
+        buttonRandius1 = new eco.app.myswing.ButtonRandius();
         jLabel1 = new javax.swing.JLabel();
         cboCategory = new javax.swing.JLabel();
-        comboBoxCustom1 = new eco.app.swing.ComboBoxCustom();
-        cboBrand = new eco.app.swing.ComboBoxCustom();
+        comboBoxCustom1 = new eco.app.myswing.ComboBoxCustom();
+        cboBrand = new eco.app.myswing.ComboBoxCustom();
         scProduct = new javax.swing.JScrollPane();
         pnListProduct = new javax.swing.JPanel();
         pnOrder = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tableCustom1 = new eco.app.swing.TableCustom();
+        tableCustom1 = new eco.app.myswing.TableCustom();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        textFieldCustom2 = new eco.app.swing.TextFieldCustom();
+        textFieldCustom2 = new eco.app.myswing.TextFieldCustom();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        textFieldCustom3 = new eco.app.swing.TextFieldCustom();
+        textFieldCustom3 = new eco.app.myswing.TextFieldCustom();
         jPanel6 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        textFieldCustom4 = new eco.app.swing.TextFieldCustom();
+        textFieldCustom4 = new eco.app.myswing.TextFieldCustom();
         jPanel7 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        textFieldCustom5 = new eco.app.swing.TextFieldCustom();
+        textFieldCustom5 = new eco.app.myswing.TextFieldCustom();
         jPanel3 = new javax.swing.JPanel();
-        buttonRandius2 = new eco.app.swing.ButtonRandius();
-        buttonRandius3 = new eco.app.swing.ButtonRandius();
-        buttonRandius4 = new eco.app.swing.ButtonRandius();
+        buttonRandius2 = new eco.app.myswing.ButtonRandius();
+        buttonRandius3 = new eco.app.myswing.ButtonRandius();
+        buttonRandius4 = new eco.app.myswing.ButtonRandius();
 
         pnFindProduct.setBackground(SaveData.BG_CONTENT );
 
@@ -373,13 +373,13 @@ public class OrderPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.swing.ButtonRandius buttonRandius1;
-    private eco.app.swing.ButtonRandius buttonRandius2;
-    private eco.app.swing.ButtonRandius buttonRandius3;
-    private eco.app.swing.ButtonRandius buttonRandius4;
-    private eco.app.swing.ComboBoxCustom cboBrand;
+    private eco.app.myswing.ButtonRandius buttonRandius1;
+    private eco.app.myswing.ButtonRandius buttonRandius2;
+    private eco.app.myswing.ButtonRandius buttonRandius3;
+    private eco.app.myswing.ButtonRandius buttonRandius4;
+    private eco.app.myswing.ComboBoxCustom cboBrand;
     private javax.swing.JLabel cboCategory;
-    private eco.app.swing.ComboBoxCustom comboBoxCustom1;
+    private eco.app.myswing.ComboBoxCustom comboBoxCustom1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -398,11 +398,11 @@ public class OrderPanel extends javax.swing.JPanel {
     private javax.swing.JPanel pnListProduct;
     private javax.swing.JPanel pnOrder;
     private javax.swing.JScrollPane scProduct;
-    private eco.app.swing.TableCustom tableCustom1;
-    private eco.app.swing.TextFieldCustom textFieldCustom1;
-    private eco.app.swing.TextFieldCustom textFieldCustom2;
-    private eco.app.swing.TextFieldCustom textFieldCustom3;
-    private eco.app.swing.TextFieldCustom textFieldCustom4;
-    private eco.app.swing.TextFieldCustom textFieldCustom5;
+    private eco.app.myswing.TableCustom tableCustom1;
+    private eco.app.myswing.TextFieldCustom textFieldCustom1;
+    private eco.app.myswing.TextFieldCustom textFieldCustom2;
+    private eco.app.myswing.TextFieldCustom textFieldCustom3;
+    private eco.app.myswing.TextFieldCustom textFieldCustom4;
+    private eco.app.myswing.TextFieldCustom textFieldCustom5;
     // End of variables declaration//GEN-END:variables
 }

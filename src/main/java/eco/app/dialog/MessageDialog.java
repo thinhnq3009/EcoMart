@@ -4,25 +4,12 @@
  */
 package eco.app.dialog;
 
-import java.awt.Label;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import net.miginfocom.swing.MigLayout;
 import eco.app.helper.SaveData;
-import eco.app.swing.ButtonRandius;
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Font;
+import eco.app.myswing.ButtonRandius;
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.Icon;
-import javax.swing.JFrame;
 
 /**
  *
@@ -123,7 +110,7 @@ public class MessageDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         pnButton = new javax.swing.JPanel();
-        btnHide = new eco.app.swing.ButtonRandius();
+        btnHide = new eco.app.myswing.ButtonRandius();
         jPanel4 = new javax.swing.JPanel();
         lblIcon = new javax.swing.JLabel();
         lblContent = new javax.swing.JLabel();
@@ -264,7 +251,7 @@ public class MessageDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.swing.ButtonRandius btnHide;
+    private eco.app.myswing.ButtonRandius btnHide;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

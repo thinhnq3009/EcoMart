@@ -5,7 +5,7 @@
 package eco.app.component;
 
 import eco.app.helper.SaveData;
-import eco.app.swing.ButtonRandius;
+import eco.app.myswing.ButtonRandius;
 
 /**
  *
@@ -41,7 +41,7 @@ public class Header extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnShow = new eco.app.swing.ButtonRandius();
+        btnShow = new eco.app.myswing.ButtonRandius();
 
         setBackground(new java.awt.Color(121, 218, 232));
         setMaximumSize(new java.awt.Dimension(9999, 60));
@@ -84,6 +84,6 @@ public class Header extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.swing.ButtonRandius btnShow;
+    private eco.app.myswing.ButtonRandius btnShow;
     // End of variables declaration//GEN-END:variables
 }

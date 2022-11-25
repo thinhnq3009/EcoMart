@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -27,6 +29,8 @@ public class ImageHelper {
     public ImageIcon openImage(String uri) {
         return new ImageIcon(getClass().getResource("/eco/app/icon/" + uri));
     }
+
+
 
     public static Image resize(Image image) {
         int w = SaveData.SIZE.width;

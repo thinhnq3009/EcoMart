@@ -33,8 +33,8 @@ public class ProductItem extends javax.swing.JPanel {
     private void initComponents() {
 
         pnPlus = new javax.swing.JPanel();
-        textFieldCustom1 = new eco.app.swing.TextFieldCustom();
-        btnPlus = new eco.app.swing.ButtonRandius();
+        textFieldCustom1 = new eco.app.myswing.TextFieldCustom();
+        btnPlus = new eco.app.myswing.ButtonRandius();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -168,7 +168,7 @@ public class ProductItem extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.swing.ButtonRandius btnPlus;
+    private eco.app.myswing.ButtonRandius btnPlus;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -179,6 +179,6 @@ public class ProductItem extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel pnPlus;
-    private eco.app.swing.TextFieldCustom textFieldCustom1;
+    private eco.app.myswing.TextFieldCustom textFieldCustom1;
     // End of variables declaration//GEN-END:variables
 }

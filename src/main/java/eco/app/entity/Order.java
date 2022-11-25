@@ -11,21 +11,15 @@ import java.util.Date;
  *
  * @author Lenovo
  */
-public class Order implements Entity {
+public class Order extends Entity {
 
-    protected int id;
+    
     protected int employeeId;
     protected int voucherId;
     protected int customerId;
     protected Date timeCreate;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+  
 
     public int getEmployeeId() {
         return employeeId;

@@ -7,6 +7,7 @@ package eco.app.entity;
 import eco.app.dao.ManageDao;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,7 +33,8 @@ public class EntityHelper {
         Field[] fields = e.getClass().getDeclaredFields();
 
         if (fieldName[0].equals("all")) {
-            Object value[] = new Object[fields.length];
+            Object value[] = new Object[fields.length + 1];
+            value[0] = e.getId();
             int counter = 0;
             for (Field field : fields) {
                 try {
@@ -47,10 +49,22 @@ public class EntityHelper {
             return value;
         }
 
-        Object[] value = new Object[fieldName.length];
+        int indexId = Arrays.asList(fieldName).indexOf("id");
+        int len = fieldName.length;
+//        len += indexId != -1 ? 1 : 0;
+
+        Object[] value = new Object[len];
         int counter = 0;
 
+        //Set ID
+        if (indexId != -1) {
+            value[indexId] = e.getId();
+        }
+
         for (String name : fieldName) {
+
+            counter += indexId == counter ? 1 : 0;
+
             for (Field field : fields) {
                 if (field.getName().equals(name)) {
                     try {
@@ -69,5 +83,15 @@ public class EntityHelper {
         return value;
     }
 
-    
+    public static Entity find(List list, int id) {
+        for (Object o : list) {
+            if (o instanceof Entity e) {
+                if (e.getId() == id) {
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
+
 }

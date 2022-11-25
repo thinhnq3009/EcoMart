@@ -1,13 +1,9 @@
 package eco.app.helper;
 
-import eco.app.dao.EmployeeDao;
 import eco.app.entity.Employee;
-import eco.app.entity.Manage;
 import eco.app.event.ValidateActionAdapter;
-import eco.app.swing.TextFieldCustom;
+import eco.app.myswing.TextFieldCustom;
 import java.awt.Color;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -30,7 +26,6 @@ public class ShareData {
     };
 
     public static Employee USER_LOGIN;
-    public static Manage MANAGE_LOGIN;
 
 //    static {
 //        try {

@@ -10,22 +10,16 @@ import java.sql.ResultSet;
  *
  * @author Lenovo
  */
-public class Customer implements Entity {
+public class Customer extends Entity {
 
-    protected int id;
+    
     protected String fullname;
     protected String email;
     protected int rank;
     protected int spent;
     protected int coin;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+  
 
     public String getFullname() {
         return fullname;

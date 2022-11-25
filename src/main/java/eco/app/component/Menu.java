@@ -38,12 +38,15 @@ public class Menu extends javax.swing.JPanel {
         scrollPanel.setViewportBorder(null);
 
         pnContainerMenu.setLayout(new MigLayout("fillx, insets 0", "0[]0", "[]0[]"));
-
         init();
     }
 
     public List<MenuItem> getMenuItems() {
         return menuItems;
+    }
+    
+    public MenuItem getMenuItem(int index) {
+        return menuItems.get(index);
     }
 
     private void init() {

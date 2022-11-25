@@ -4,9 +4,13 @@
  */
 package eco.app.dialog;
 
+import eco.app.dao.EmployeeDao;
 import eco.app.dialog.MessageDialog.MessageType;
+import eco.app.entity.Employee;
 import eco.app.helper.MessageHelper;
 import eco.app.helper.SaveData;
+import eco.app.helper.ShareData;
+import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 
 /**
@@ -43,8 +47,8 @@ public class Login extends javax.swing.JDialog {
         pnContainer = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        textFieldCustom1 = new eco.app.swing.TextFieldCustom();
-        passwordFieldCustom1 = new eco.app.swing.PasswordFieldCustom();
+        txtUsername = new eco.app.swing.TextFieldCustom();
+        txtPassword = new eco.app.swing.PasswordFieldCustom();
         jPanel3 = new javax.swing.JPanel();
         btnLogin = new eco.app.swing.ButtonRandius();
         btnCancel = new eco.app.swing.ButtonRandius();
@@ -85,12 +89,24 @@ public class Login extends javax.swing.JDialog {
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel5.setText("Password:");
 
-        textFieldCustom1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtUsername.setText("thinh");
+        txtUsername.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtUsername.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtUsernameKeyReleased(evt);
+            }
+        });
 
-        passwordFieldCustom1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        passwordFieldCustom1.addActionListener(new java.awt.event.ActionListener() {
+        txtPassword.setText("123");
+        txtPassword.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passwordFieldCustom1ActionPerformed(evt);
+                txtPasswordActionPerformed(evt);
+            }
+        });
+        txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPasswordKeyReleased(evt);
             }
         });
 
@@ -98,24 +114,24 @@ public class Login extends javax.swing.JDialog {
         pnContainer.setLayout(pnContainerLayout);
         pnContainerLayout.setHorizontalGroup(
             pnContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(textFieldCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(txtUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnContainerLayout.createSequentialGroup()
                 .addGroup(pnContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(passwordFieldCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnContainerLayout.setVerticalGroup(
             pnContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnContainerLayout.createSequentialGroup()
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textFieldCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(passwordFieldCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jPanel3.setOpaque(false);
@@ -224,20 +240,53 @@ public class Login extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void passwordFieldCustom1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordFieldCustom1ActionPerformed
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_passwordFieldCustom1ActionPerformed
+    }//GEN-LAST:event_txtPasswordActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        MessageType click = MessageHelper.showMessage(null, "Bạn có muốn thoát ứng dụng hay không");
+        MessageType click = MessageHelper.showConfirm(this, "Do you ext?");
         if (click == MessageType.YES) {
             System.exit(0);
         }
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        // TODO add your handling code here:
+        try {
+            EmployeeDao dao = new EmployeeDao();
+
+            String username = txtUsername.getText();
+            String password = String.valueOf(txtPassword.getPassword());
+
+            Employee employee = dao.findByUsername(username);
+
+            if (employee != null) {
+                if (employee.getPassword().endsWith(password)) {
+                    ShareData.USER_LOGIN = employee;
+                    dispose();
+                } else {
+                    MessageHelper.showMessage(this, "Password is inconrect");
+                }
+            } else {
+                MessageHelper.showMessage(this, "Username is inconrect");
+            }
+
+        } catch (Exception e) {
+            MessageHelper.showException(this, e);
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void txtUsernameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsernameKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            btnLoginActionPerformed(null);
+        }
+    }//GEN-LAST:event_txtUsernameKeyReleased
+
+    private void txtPasswordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            btnLoginActionPerformed(null);
+        }
+    }//GEN-LAST:event_txtPasswordKeyReleased
 
     /**
      * @param args the command line arguments
@@ -294,9 +343,9 @@ public class Login extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private eco.app.swing.Link link1;
-    private eco.app.swing.PasswordFieldCustom passwordFieldCustom1;
     private javax.swing.JPanel pnContainer;
     private javax.swing.JPanel pnLogin;
-    private eco.app.swing.TextFieldCustom textFieldCustom1;
+    private eco.app.swing.PasswordFieldCustom txtPassword;
+    private eco.app.swing.TextFieldCustom txtUsername;
     // End of variables declaration//GEN-END:variables
 }

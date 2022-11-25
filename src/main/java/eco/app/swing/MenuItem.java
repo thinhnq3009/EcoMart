@@ -8,7 +8,7 @@ import eco.app.swing.model.MenuModel;
 import eco.app.event.MenuEvent;
 import eco.app.helper.SaveData;
 import javax.swing.ImageIcon;
-import eco.app.swing.shadow.RippleEffect;
+import eco.app.swing.effect.RippleEffect;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -82,16 +82,9 @@ public class MenuItem extends javax.swing.JPanel {
                 repaint();
             }
         };
-        animator = new Animator(300, target);
-        
-        // event
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("---> " + getText());
-            }
-            
-        });
+        animator = new Animator(200, target);
+       
+   
         
     }
 

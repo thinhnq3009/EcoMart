@@ -5,9 +5,6 @@
 package eco.app.dao;
 
 import eco.app.entity.Entity;
-import eco.app.entity.Manage;
-import java.sql.ResultSet;
-import java.util.List;
 
 /**
  *

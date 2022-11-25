@@ -5,8 +5,8 @@
 package eco.app.swing;
 
 import eco.app.helper.SaveData;
-import eco.app.swing.shadow.RippleEffect;
-import eco.app.swing.shadow.ShadowRenderer;
+import eco.app.swing.effect.RippleEffect;
+import eco.app.swing.effect.ShadowRenderer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;

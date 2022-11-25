@@ -4,71 +4,186 @@
  */
 package eco.app.panel;
 
-import eco.app.component.ProductItem;
 import eco.app.dao.BrandDao;
 import eco.app.dao.CategoryDao;
+import eco.app.dao.ProductDao;
 import eco.app.entity.Brand;
 import eco.app.entity.Category;
+import eco.app.entity.EntityHelper;
 import eco.app.entity.Product;
+import eco.app.helper.ImageHelper;
 import eco.app.helper.MessageHelper;
 import eco.app.helper.SaveData;
 import eco.app.helper.ShareData;
-import eco.app.swing.ScrollBarCustom;
-import eco.app.swing.TabbedPaneCustom;
-import java.awt.Color;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.awt.Image;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.Date;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
+
+import static eco.app.helper.DateHeper.*;
+import eco.app.swing.MyChooser;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  *
  * @author Lenovo
  */
 public class ProductPanel extends javax.swing.JPanel {
-    
+
     private List<Category> categories;
     private List<Brand> brands;
+    private List<Product> products;
+
+    private byte[] imageSelected;
 
     /**
      * Creates new form OrderPanel
      */
-    private MigLayout layout = new MigLayout("fill", "0[]10[]0", "0[]0");
-    
+    private final MigLayout layout = new MigLayout("fill", "0[]10[]0", "0[]0");
+
     public ProductPanel() {
         initComponents();
         init();
     }
-    
+
     private void init() {
         setLayout(layout);
         add(pnFormProduct, "w 650!, h 100%");
         add(pnListProduct, "w 100%, h 100%");
-        
+
+        // 
         loadComboBox();
+        initAutoFill();
+        fillTable();
+
     }
-    
-    private Product readForm() {
+
+    private void clearForm() {
+        txtName.setText("");
+        txtPrice.setText("");
+        txtQuantity.setText("");
+        txtDescription.setText("");
+        lblImage.setIcon(new ImageHelper().openImage("temp-product-item.png"));
+        cbCategory.setSelectedIndex(0);
+        cbBrand.setSelectedIndex(0);
+        imageSelected = null;
+        txtNote.setText("");
+        txtDiscount.setText("");
+        txtExpiry.setText(dateToString(today()));
+
+        // set background
+        txtName.runValid();
+        txtPrice.runValid();
+        txtQuantity.runValid();
+        txtDescription.runValid();
+        txtDiscount.runValid();
+        txtExpiry.runValid();
+
+
+    }
+
+    private void fillTable() {
+        try {
+            ProductDao dao = new ProductDao();
+            products = dao.getAll();
+
+            DefaultTableModel model = (DefaultTableModel) tblProduct.getModel();
+
+            model.setRowCount(0);
+
+            for (Product p : products) {
+                model.addRow(EntityHelper.getData(p,
+                        "id",
+                        "name",
+                        "price",
+                        "discountText",
+                        "quantity",
+                        "sold"));
+            }
+        } catch (Exception e) {
+            MessageHelper.showException(this, e);
+        }
+    }
+
+    private Product readForm(StringBuilder sb) throws Exception {
+        if (!validateForm(sb)) {
+            throw new Exception("Invalid input data");
+        }
+
         String name = txtName.getText();
-        String price = txtPrice.getText();
-        String quantity = txtQuantity.getText();
+        int price = Integer.parseInt(txtPrice.getText());
+        double discount = Double.parseDouble(txtDiscount.getText());
+        int quantity = Integer.parseInt(txtQuantity.getText());
         String description = txtDescription.getText();
-        return null;
+        Date date = stringToDate(txtExpiry.getText());
+        Category category = (Category) cbCategory.getSelectedItem();
+        Brand brand = (Brand) cbBrand.getSelectedItem();
+        String note = txtNote.getText();
+
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(price);
+        product.setEmployeeId(ShareData.USER_LOGIN.getId());
+        product.setDiscount(discount);
+        product.setQuantity(quantity);
+        product.setTimeAdd(today());
+        product.setExpiry(date);
+        product.setCategoryId(category.getId());
+        product.setBrandId(brand.getId());
+        product.setImage(imageSelected);
+        product.setDescription(description);
+        product.setNote(note);
+        return product;
+
     }
-    
+
+    private void fillForm(Product product) {
+        txtName.setText(product.getName());
+        txtPrice.setText(product.getPrice() + "");
+        txtDiscount.setText(product.getDiscount() + "");
+        txtQuantity.setText(product.getQuantity() + "");
+        txtDescription.setText(product.getDescription());
+        txtExpiry.setText(dateToString(product.getExpiry()));
+        cbCategory.setSelectedItem(product.getCategory());
+        cbBrand.setSelectedItem(product.getBrand());
+        imageSelected = product.getImage();
+        try {
+            Image image = ImageHelper.createImage(imageSelected, "png");
+            Image resize = ImageHelper.resize(image);
+            ImageIcon icon = new ImageIcon(resize);
+            lblImage.setIcon(icon);
+        } catch (Exception ex) {
+            try {
+                ImageIcon icon = new ImageHelper().openImage("temp-product-item.png");
+                lblImage.setIcon(icon);
+                imageSelected = ImageHelper.imageToByte(icon.getImage(), "png");
+            } catch (Exception e) {
+                MessageHelper.showException(this, e);
+            }
+        }
+    }
+
     private boolean validateForm(StringBuilder sb) {
-         
+
         txtName.check(sb, "Name can't empty.\n");
         txtPrice.check(sb, "Price is invalid.\n");
         txtQuantity.check(sb, "Quantity is invalid.\n");
-        txtExpiry.check(sb, "The expiry date must be in the form (dd-MM-YYYY).\n");
+        txtExpiry.check(sb, "The expiry date must be in the form (dd/MM/YYYY).\n");
         txtDiscount.check(sb, "Discount is invalid.\n");
         txtDescription.check(sb, "Description can't empty.\n");
-        
+
         return sb.isEmpty();
     }
-    
+
     private void loadComboBox() {
         try {
             // Load brand
@@ -77,7 +192,7 @@ public class ProductPanel extends javax.swing.JPanel {
             for (Brand br : brands) {
                 brandModel.addElement(br);
             }
-            cboBrand.setModel(brandModel);
+            cbBrand.setModel(brandModel);
 
             // Load  category
             categories = new CategoryDao().getAll();
@@ -85,11 +200,98 @@ public class ProductPanel extends javax.swing.JPanel {
             for (Category ct : categories) {
                 categoryModel.addElement(ct);
             }
-            cboCategory.setModel(categoryModel);
-            
+            cbCategory.setModel(categoryModel);
+
         } catch (Exception e) {
         }
-        
+
+    }
+
+    private void initAutoFill() {
+
+        /*
+        auto fill expiry
+         */
+        txtExpiry.setText(todayString());
+
+        txtExpiry.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+
+                    try {
+
+                        Date oldDate = stringToDate(txtExpiry.getText());
+
+                        txtExpiry.setText(dateToString(plusDate(oldDate, 5, 1)));
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+
+                        txtExpiry.setText(todayString());
+
+                    }
+
+                    return;
+
+                }
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+
+                    try {
+
+                        Date oldDate = stringToDate(txtExpiry.getText());
+
+                        txtExpiry.setText(dateToString(plusDate(oldDate, 5, -1)));
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+
+                        txtExpiry.setText(todayString());
+
+                    }
+
+                    return;
+
+                }
+
+            }
+
+        });
+
+        /*
+        auto select discount
+         */
+        txtDiscount.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String discount = txtDiscount.getText();
+                if (discount.matches("[0-9]+")) {
+                    cbByVND.setSelected(true);
+                } else if (discount.matches("0[.,][0-9]{1,2}|[0-9]{1,2}%")) {
+                    cbByPercent.setSelected(true);
+                }
+            }
+
+        });
+
+        /*
+        Auto fill Description
+         */
+        txtDescription.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String name = txtName.getText();
+                String price = txtPrice.getText();
+                String brand = cbBrand.getSelectedItem().toString();
+                String category = cbCategory.getSelectedItem().toString();
+                // Name: 10000VND  [Brand] - [Category]
+                String description = name + ": " + price + "VND  [" + brand + "] - [" + category + "]";
+                txtDescription.setText(description);
+                txtDescription.selectAll();
+
+            }
+
+        });
     }
 
     /**
@@ -105,9 +307,13 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblProduct = new eco.app.swing.TableCustom();
+        txtFindItem = new eco.app.swing.TextFieldCustom();
+        btnReload = new eco.app.swing.ButtonRandius();
+        cbByName = new eco.app.swing.CheckBoxCustom();
+        cbByID = new eco.app.swing.CheckBoxCustom();
         pnFormProduct = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblImage = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -127,15 +333,15 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel10 = new javax.swing.JLabel();
         txtDiscount = new eco.app.swing.TextFieldCustom();
         jPanel12 = new javax.swing.JPanel();
-        checkBoxCustom1 = new eco.app.swing.CheckBoxCustom();
-        checkBoxCustom2 = new eco.app.swing.CheckBoxCustom();
+        cbByVND = new eco.app.swing.CheckBoxCustom();
+        cbByPercent = new eco.app.swing.CheckBoxCustom();
         jPanel8 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        cboCategory = new eco.app.swing.ComboBoxCustom();
+        cbCategory = new eco.app.swing.ComboBoxCustom();
         jPanel9 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        cboBrand = new eco.app.swing.ComboBoxCustom();
+        cbBrand = new eco.app.swing.ComboBoxCustom();
         jPanel13 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         txtDescription = new eco.app.swing.TextFieldCustom();
@@ -148,7 +354,8 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtNote = new javax.swing.JTextArea();
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        gbtnDiscount = new javax.swing.ButtonGroup();
+        gbtnFindItem = new javax.swing.ButtonGroup();
 
         pnListProduct.setBackground(SaveData.BG_CONTENT     );
         pnListProduct.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -161,9 +368,10 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("List Product");
 
+        tblProduct.setAutoCreateRowSorter(true);
         tblProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
+                {null, "Bánh ",  new Integer(3000),  new Double(0.3),  new Integer(300),  new Integer(12)},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null}
@@ -171,8 +379,73 @@ public class ProductPanel extends javax.swing.JPanel {
             new String [] {
                 "ID", "Name", "Price", "Discount", "Quantity", "Sold"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Long.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblProduct.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
+        tblProduct.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        tblProduct.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblProductMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblProduct);
+
+        txtFindItem.setFont(new java.awt.Font("Roboto", 0, 13)); // NOI18N
+        txtFindItem.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtFindItemFocusGained(evt);
+            }
+        });
+        txtFindItem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtFindItemKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFindItemKeyReleased(evt);
+            }
+        });
+
+        btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eco/app/icon/icons8_sync_25px.png"))); // NOI18N
+        btnReload.setText("Reload");
+        btnReload.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        btnReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReloadActionPerformed(evt);
+            }
+        });
+
+        gbtnFindItem.add(cbByName);
+        cbByName.setSelected(true);
+        cbByName.setText("By name");
+        cbByName.setFont(new java.awt.Font("Roboto", 1, 12)); // NOI18N
+        cbByName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cbByNameMouseClicked(evt);
+            }
+        });
+
+        gbtnFindItem.add(cbByID);
+        cbByID.setText("By ID");
+        cbByID.setFont(new java.awt.Font("Roboto", 1, 12)); // NOI18N
+        cbByID.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cbByIDMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnListProductLayout = new javax.swing.GroupLayout(pnListProduct);
         pnListProduct.setLayout(pnListProductLayout);
@@ -181,7 +454,16 @@ public class ProductPanel extends javax.swing.JPanel {
             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnListProductLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                .addGroup(pnListProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addGroup(pnListProductLayout.createSequentialGroup()
+                        .addComponent(txtFindItem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbByName, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbByID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnReload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         pnListProductLayout.setVerticalGroup(
@@ -189,7 +471,14 @@ public class ProductPanel extends javax.swing.JPanel {
             .addGroup(pnListProductLayout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addGroup(pnListProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtFindItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnListProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnReload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbByName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbByID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -198,12 +487,17 @@ public class ProductPanel extends javax.swing.JPanel {
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eco/app/icon/temp-product-item.png"))); // NOI18N
-        jLabel1.setMaximumSize(new java.awt.Dimension(200, 200));
-        jLabel1.setMinimumSize(new java.awt.Dimension(200, 200));
-        jLabel1.setPreferredSize(new java.awt.Dimension(200, 200));
-        jPanel1.add(jLabel1, java.awt.BorderLayout.LINE_START);
+        lblImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eco/app/icon/temp-product-item.png"))); // NOI18N
+        lblImage.setMaximumSize(new java.awt.Dimension(200, 200));
+        lblImage.setMinimumSize(new java.awt.Dimension(200, 200));
+        lblImage.setPreferredSize(new java.awt.Dimension(200, 200));
+        lblImage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblImageMouseClicked(evt);
+            }
+        });
+        jPanel1.add(lblImage, java.awt.BorderLayout.LINE_START);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 15));
         jPanel2.setOpaque(false);
@@ -221,6 +515,7 @@ public class ProductPanel extends javax.swing.JPanel {
 
         txtName.setCanEmpty(false);
         txtName.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtName.setRegex("[^~]+");
         txtName.setValidateAction(ShareData.validateAction);
         jPanel7.add(txtName, java.awt.BorderLayout.CENTER);
 
@@ -274,6 +569,7 @@ public class ProductPanel extends javax.swing.JPanel {
 
         txtExpiry.setCanEmpty(false);
         txtExpiry.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtExpiry.setRegex("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$");
         txtExpiry.setValidateAction(ShareData.validateAction);
         jPanel6.add(txtExpiry, java.awt.BorderLayout.CENTER);
 
@@ -300,21 +596,22 @@ public class ProductPanel extends javax.swing.JPanel {
 
         txtDiscount.setCanEmpty(false);
         txtDiscount.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtDiscount.setRegex("[0-9]+[.][0-9]{1,2}|[0-9]+|[0-9]{1,2}%");
         txtDiscount.setValidateAction(ShareData.validateAction);
         jPanel11.add(txtDiscount, java.awt.BorderLayout.CENTER);
 
         jPanel12.setOpaque(false);
         jPanel12.setLayout(new java.awt.GridLayout(1, 0, 10, 0));
 
-        buttonGroup1.add(checkBoxCustom1);
-        checkBoxCustom1.setText("By VND");
-        checkBoxCustom1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel12.add(checkBoxCustom1);
+        gbtnDiscount.add(cbByVND);
+        cbByVND.setText("By VND");
+        cbByVND.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel12.add(cbByVND);
 
-        buttonGroup1.add(checkBoxCustom2);
-        checkBoxCustom2.setText("By %");
-        checkBoxCustom2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel12.add(checkBoxCustom2);
+        gbtnDiscount.add(cbByPercent);
+        cbByPercent.setText("By %");
+        cbByPercent.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel12.add(cbByPercent);
 
         jPanel11.add(jPanel12, java.awt.BorderLayout.LINE_END);
 
@@ -332,7 +629,9 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel4.setMinimumSize(new java.awt.Dimension(100, 17));
         jLabel4.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel10.add(jLabel4, java.awt.BorderLayout.LINE_START);
-        jPanel10.add(cboCategory, java.awt.BorderLayout.CENTER);
+
+        cbCategory.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel10.add(cbCategory, java.awt.BorderLayout.CENTER);
 
         jPanel8.add(jPanel10);
 
@@ -342,7 +641,9 @@ public class ProductPanel extends javax.swing.JPanel {
         jLabel9.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel9.setText("Brand:");
         jPanel9.add(jLabel9, java.awt.BorderLayout.LINE_START);
-        jPanel9.add(cboBrand, java.awt.BorderLayout.CENTER);
+
+        cbBrand.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel9.add(cbBrand, java.awt.BorderLayout.CENTER);
 
         jPanel8.add(jPanel9);
 
@@ -360,6 +661,7 @@ public class ProductPanel extends javax.swing.JPanel {
 
         txtDescription.setCanEmpty(false);
         txtDescription.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtDescription.setRegex("[^~]+");
         txtDescription.setValidateAction(ShareData.validateAction);
         jPanel13.add(txtDescription, java.awt.BorderLayout.CENTER);
 
@@ -370,6 +672,11 @@ public class ProductPanel extends javax.swing.JPanel {
 
         btnNew.setText("New");
         btnNew.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        btnNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewActionPerformed(evt);
+            }
+        });
         jPanel15.add(btnNew);
 
         btnInsert.setBackground(SaveData.BTN_SUCCESS);
@@ -384,11 +691,13 @@ public class ProductPanel extends javax.swing.JPanel {
 
         btnUpdate.setBackground(SaveData.BTN_WARNING);
         btnUpdate.setText("Update");
+        btnUpdate.setEnabled(false);
         btnUpdate.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jPanel15.add(btnUpdate);
 
         btnDelete.setBackground(SaveData.BTN_DANGER);
         btnDelete.setText("Delete");
+        btnDelete.setEnabled(false);
         btnDelete.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -437,7 +746,7 @@ public class ProductPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -464,30 +773,133 @@ public class ProductPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_pnListProductComponentResized
 
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        
         StringBuilder sb = new StringBuilder();
-        validateForm(sb);
-        
-        MessageHelper.showMessage(null, sb.toString());
+        try {
+            
+            ProductDao dao = new ProductDao();
+
+            if (dao.insert(readForm(sb))) {
+                System.out.println("Thêm sản phẩm thành công");
+
+            } else {
+                System.out.println("Thêm sản phẩm thất bại");
+            }
+        } catch (Exception e) {
+            MessageHelper.showException(this, e);
+        }
+
+        fillTable();
     }//GEN-LAST:event_btnInsertActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        String a = cboCategory.getSelectedItem().toString();
-        System.out.println(cboCategory.getSelectedItem().getClass());
+        String a = cbCategory.getSelectedItem().toString();
+        System.out.println(cbCategory.getSelectedItem().getClass());
     }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void lblImageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblImageMouseClicked
+
+        MyChooser chooser = new MyChooser();
+
+        chooser.addFilter("Hình ảnh (.png, .jpg)", "png", "jpg");
+        chooser.addFilter("All file", "*");
+
+        boolean option = chooser.showOpenDialog(this);
+        if (!option) {
+            return;
+        }
+
+        File f = chooser.getSelectedFile();
+        Image image = new ImageIcon(f.getPath()).getImage();
+        lblImage.setIcon(new ImageIcon(ImageHelper.resize(image)));
+
+        try {
+            imageSelected = ImageHelper.imageToByte(image, "png");
+        } catch (Exception e) {
+
+        }
+
+    }//GEN-LAST:event_lblImageMouseClicked
+
+    private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
+        fillTable();
+    }//GEN-LAST:event_btnReloadActionPerformed
+
+    private void txtFindItemKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFindItemKeyPressed
+
+    }//GEN-LAST:event_txtFindItemKeyPressed
+
+    private void txtFindItemFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFindItemFocusGained
+        txtFindItem.selectAll();
+    }//GEN-LAST:event_txtFindItemFocusGained
+
+    private void txtFindItemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFindItemKeyReleased
+
+        String key = txtFindItem.getText().toLowerCase();
+
+        DefaultTableModel model = (DefaultTableModel) tblProduct.getModel();
+
+        model.setRowCount(0);
+
+        for (Product product : products) {
+            String name = product.getName().toLowerCase();
+            String id = String.valueOf(product.getId());
+            if (name.contains(key)
+                    && cbByName.isSelected()) {
+                model.addRow(EntityHelper.getData(product,
+                        "id",
+                        "name",
+                        "price",
+                        "discount",
+                        "quantity",
+                        "sold"));
+            } else if (id.contains(key)
+                    && cbByID.isSelected()) {
+                model.addRow(EntityHelper.getData(product,
+                        "id",
+                        "name",
+                        "price",
+                        "discount",
+                        "quantity",
+                        "sold"));
+            }
+        }
+    }//GEN-LAST:event_txtFindItemKeyReleased
+
+    private void cbByIDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbByIDMouseClicked
+        txtFindItemKeyReleased(null);
+    }//GEN-LAST:event_cbByIDMouseClicked
+
+    private void cbByNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbByNameMouseClicked
+        txtFindItemKeyReleased(null);
+    }//GEN-LAST:event_cbByNameMouseClicked
+
+    private void tblProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductMouseClicked
+        if (evt.getClickCount() == 2) {
+            int index = tblProduct.getSelectedRow();
+            Product product = products.get(index);
+            fillForm(product);
+        }
+    }//GEN-LAST:event_tblProductMouseClicked
+
+    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+        clearForm();
+    }//GEN-LAST:event_btnNewActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private eco.app.swing.ButtonRandius btnDelete;
     private eco.app.swing.ButtonRandius btnInsert;
     private eco.app.swing.ButtonRandius btnNew;
+    private eco.app.swing.ButtonRandius btnReload;
     private eco.app.swing.ButtonRandius btnUpdate;
-    private javax.swing.ButtonGroup buttonGroup1;
-    private eco.app.swing.ComboBoxCustom cboBrand;
-    private eco.app.swing.ComboBoxCustom cboCategory;
-    private eco.app.swing.CheckBoxCustom checkBoxCustom1;
-    private eco.app.swing.CheckBoxCustom checkBoxCustom2;
-    private javax.swing.JLabel jLabel1;
+    private eco.app.swing.ComboBoxCustom cbBrand;
+    private eco.app.swing.CheckBoxCustom cbByID;
+    private eco.app.swing.CheckBoxCustom cbByName;
+    private eco.app.swing.CheckBoxCustom cbByPercent;
+    private eco.app.swing.CheckBoxCustom cbByVND;
+    private eco.app.swing.ComboBoxCustom cbCategory;
+    private javax.swing.ButtonGroup gbtnDiscount;
+    private javax.swing.ButtonGroup gbtnFindItem;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -516,15 +928,18 @@ public class ProductPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblImage;
     private javax.swing.JPanel pnFormProduct;
     private javax.swing.JPanel pnListProduct;
     private eco.app.swing.TableCustom tblProduct;
     private eco.app.swing.TextFieldCustom txtDescription;
     private eco.app.swing.TextFieldCustom txtDiscount;
     private eco.app.swing.TextFieldCustom txtExpiry;
+    private eco.app.swing.TextFieldCustom txtFindItem;
     private eco.app.swing.TextFieldCustom txtName;
     private javax.swing.JTextArea txtNote;
     private eco.app.swing.TextFieldCustom txtPrice;
     private eco.app.swing.TextFieldCustom txtQuantity;
     // End of variables declaration//GEN-END:variables
+
 }

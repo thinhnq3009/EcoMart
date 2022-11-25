@@ -4,6 +4,10 @@
  */
 package eco.app.main;
 
+import eco.app.dialog.Login;
+import eco.app.helper.ImageHelper;
+import eco.app.helper.ShareData;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 /**
@@ -19,6 +23,7 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        setIconImage(new ImageHelper().openImage("app-logo.png").getImage());
     }
 
     /**
@@ -30,7 +35,7 @@ public class Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainFrom1 = new eco.app.panel.MainFrom();
+        mainFrom1 = new eco.app.panel.EmployeePanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Eco_Mart Mangement");
@@ -39,12 +44,14 @@ public class Main extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainFrom1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(mainFrom1, javax.swing.GroupLayout.DEFAULT_SIZE, 871, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(mainFrom1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(mainFrom1, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -82,12 +89,19 @@ public class Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
+                Main main = new Main();
+                
+                if (ShareData.USER_LOGIN == null) {
+                    Login login = new Login(main, true);
+                    login.setVisible(true);
+                }
+                
+                main.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.panel.MainFrom mainFrom1;
+    private eco.app.panel.EmployeePanel mainFrom1;
     // End of variables declaration//GEN-END:variables
 }

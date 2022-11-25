@@ -1,4 +1,3 @@
-
 package eco.app.dao;
 
 import eco.app.entity.Entity;
@@ -6,7 +5,9 @@ import eco.app.entity.EntityHelper;
 import eco.app.entity.Product;
 import eco.app.helper.DatabaseHelper;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -117,8 +118,8 @@ public class ProductDao extends EntityDao {
     @Override
     public boolean insert(Entity e) throws Exception {
         String sql = "INSERT INTO Product"
-                + " (category_id, employee_id, brand_id, name, quantity, sold, discount, time_add, expiry)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + " (category_id, employee_id, brand_id, name, quantity, sold, discount, time_add, expiry,price, image, description, note)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
         Object[] obj = EntityHelper.getData(e,
                 "categoryId",
                 "employeeId",
@@ -128,7 +129,12 @@ public class ProductDao extends EntityDao {
                 "sold",
                 "discount",
                 "timeAdd",
-                "expiry");
+                "expiry",
+                "price",
+                "image",
+                "description",
+                "note");
+        System.out.println(Arrays.toString(obj));
         return DatabaseHelper.excuteUpdate(sql, obj);
     }
 

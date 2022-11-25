@@ -30,6 +30,10 @@ import javax.swing.JFrame;
  */
 public class MessageDialog extends javax.swing.JDialog {
 
+    public static enum DialogButton {
+        BTN_YES, BTN_NO, BTN_CANCEL
+    }
+
     public static final int DANGER = 0;
     public static final int WARNING = 1;
     public static final int SUCCESS = 2;
@@ -43,8 +47,10 @@ public class MessageDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form MessageDialog
+     *
+     * @param parent
      */
-    public MessageDialog(JFrame parent) {
+    public MessageDialog(Frame parent) {
         super(parent, true);
         init();
     }
@@ -66,9 +72,22 @@ public class MessageDialog extends javax.swing.JDialog {
         repaint();
     }
 
-    public void hidenButton(int... indexs) {
-        for (int i : indexs) {
-            pnButton.getComponent(i).setVisible(false);
+    public void hidenButton(DialogButton... buttons) {
+        for (DialogButton button : buttons) {
+            switch (button) {
+                case BTN_YES:
+                    pnButton.getComponent(0).setVisible(false);
+                    break;
+                case BTN_NO:
+                    pnButton.getComponent(1).setVisible(false);
+                    break;
+                case BTN_CANCEL:
+                    pnButton.getComponent(2).setVisible(false);
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+
         }
     }
 
@@ -123,7 +142,7 @@ public class MessageDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
 
-        jPanel1.setBackground(SaveData.BTN_SUCCESS);
+        jPanel1.setBackground(SaveData.BG_HEADER);
 
         jPanel2.setBackground(SaveData.BG_CONTAINER);
 

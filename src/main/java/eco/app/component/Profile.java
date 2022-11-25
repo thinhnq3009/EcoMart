@@ -5,8 +5,6 @@
 package eco.app.component;
 
 import eco.app.helper.SaveData;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 
 /**
  *

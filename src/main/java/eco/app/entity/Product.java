@@ -4,6 +4,8 @@
  */
 package eco.app.entity;
 
+import eco.app.dao.BrandDao;
+import eco.app.dao.CategoryDao;
 import java.sql.ResultSet;
 import java.util.Date;
 
@@ -15,15 +17,42 @@ public class Product implements Entity {
 
     protected int id;
     protected int categoryId;
-    protected int manageId;
+    protected int employeeId;
     protected int brandId;
     protected String name;
-    protected byte image;
+    protected byte[] image;
+    protected int price;
     protected int quantity;
     protected int sold;
     protected double discount;
     protected Date timeAdd;
     protected Date expiry;
+    protected String description;
+    protected String discountText;
+    protected String note;
+    
+    public Category getCategory() {
+        try {
+            return categoryId == 0
+                    ? null
+                    : new CategoryDao().getById(categoryId);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public Brand getBrand() {
+        try {
+            return brandId == 0
+                    ? null
+                    : new BrandDao().findById(brandId).get(0);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
     public int getId() {
         return id;
@@ -37,16 +66,32 @@ public class Product implements Entity {
         return categoryId;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 
-    public int getManageId() {
-        return manageId;
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public void setManageId(int manageId) {
-        this.manageId = manageId;
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 
     public int getBrandId() {
@@ -65,11 +110,11 @@ public class Product implements Entity {
         this.name = name;
     }
 
-    public byte getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(byte image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 
@@ -90,11 +135,26 @@ public class Product implements Entity {
     }
 
     public double getDiscount() {
-        return discount;
+        return (int) (discount < 1 ? discount * price : discount);
     }
 
     public void setDiscount(double discount) {
         this.discount = discount;
+
+        if (discount < 1) {
+            setDiscountText((discount * 100) + "%");
+        } else {
+            setDiscountText(discount + "");
+        }
+
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public Date getTimeAdd() {
@@ -113,6 +173,14 @@ public class Product implements Entity {
         this.expiry = expiry;
     }
 
+    public void setDiscountText(String discountText) {
+        this.discountText = discountText;
+    }
+
+    public String getDiscountText() {
+        return discountText;
+    }
+
     @Override
     public void readResultSet(ResultSet rs) throws Exception {
 
@@ -122,6 +190,7 @@ public class Product implements Entity {
          * employee_id
          * brandId
          * name
+         * image
          * quantity
          * sold
          * discount
@@ -134,15 +203,20 @@ public class Product implements Entity {
 
         this.id = rs.getInt("id");
         this.categoryId = rs.getInt("category_id");
-        this.manageId = rs.getInt("employee_id");
+        this.employeeId = rs.getInt("employee_id");
         this.brandId = rs.getInt("brand_id");
+        this.image = rs.getBytes("image");
         this.name = rs.getString("name");
+        this.price = rs.getInt("price");
         this.quantity = rs.getInt("quantity");
         this.sold = rs.getInt("sold");
-        this.discount = rs.getDouble("discount");
+        setDiscount(rs.getDouble("discount"));
         this.timeAdd = rs.getDate("time_add");
         this.expiry = rs.getDate("expiry");
+        this.description = rs.getNString("description");
 
     }
+
+  
 
 }

@@ -5,7 +5,7 @@
 package eco.app.swing;
 
 import eco.app.helper.SaveData;
-import eco.app.swing.shadow.RippleEffect;
+import eco.app.swing.effect.RippleEffect;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

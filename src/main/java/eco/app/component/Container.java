@@ -4,13 +4,17 @@
  */
 package eco.app.component;
 
+import eco.app.helper.ImageHelper;
 import eco.app.panel.CustomerPanel;
 import eco.app.swing.ButtonRandius;
 import net.miginfocom.swing.MigLayout;
 import eco.app.panel.OrderPanel;
 import eco.app.panel.ProductPanel;
 import eco.app.swing.TabbedPaneCustom;
+import java.awt.Component;
 import java.awt.Font;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  *
@@ -22,23 +26,27 @@ public class Container extends javax.swing.JPanel {
      * Creates new form Container
      */
     private MigLayout layout;
-
+    
     public Container() {
         initComponents();
         layout = new MigLayout();
-
+        
         setLayout(layout);
-
-        ProductPanel panel0 = new ProductPanel();
-        CustomerPanel panel1 = new CustomerPanel();
-        OrderPanel panel2 = new OrderPanel();
-
-        TabbedPaneCustom tabbedPaneCustom = new TabbedPaneCustom();
-        tabbedPaneCustom.setFont(new Font("Roboto", 0, 20));
-        add(tabbedPaneCustom, "w 100%, h 100%");
-        tabbedPaneCustom.add("Product", panel0);
-        tabbedPaneCustom.add("Customer", panel1);
-        tabbedPaneCustom.add("Order", panel2);
+        
+        JLabel lblIcon = new JLabel("");
+        lblIcon.setHorizontalAlignment(JLabel.CENTER);
+        ImageIcon icon = new ImageHelper().openImage("big-logo.png");
+        
+        lblIcon.setIcon(icon);
+        
+        add(lblIcon, "w 100%, h 100%");
+    }
+    
+    public void changeComponent(Component component) {
+        removeAll();
+        add(component, "w 100%, h 100%");
+        revalidate();
+        repaint();
     }
 
     /**
@@ -50,7 +58,7 @@ public class Container extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBackground(new java.awt.Color(241, 254, 254));
+        setBackground(new java.awt.Color(204, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -61,11 +69,11 @@ public class Container extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 884, Short.MAX_VALUE)
+            .addGap(0, 954, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 516, Short.MAX_VALUE)
+            .addGap(0, 556, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

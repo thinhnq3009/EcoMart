@@ -9,13 +9,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.sql.rowset.serial.SerialBlob;
 
 /**
  *
  * @author Lenovo
  */
 public class DatabaseHelper {
-   
+    
     public static Connection openConnect() throws Exception {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         String connectUrl = "jdbc:sqlserver://localhost;database=EcoMart;";
@@ -24,30 +25,34 @@ public class DatabaseHelper {
         Connection conn = DriverManager.getConnection(connectUrl, userDB, passworDB);
         return conn;
     }
-
+    
     private static PreparedStatement prepareStatement(String sql, Object[] args) throws Exception {
         Connection conn = openConnect();
         PreparedStatement pstmt = conn.prepareCall(sql);
         for (int i = 0; i < args.length; i++) {
-            pstmt.setObject(i + 1, args[i]);
+            Object o = args[i];
+            if (o instanceof byte[] bytes) {
+                pstmt.setBlob(i + 1, new SerialBlob(bytes));
+            } else {
+                pstmt.setObject(i + 1, o);
+            }
         }
         return pstmt;
     }
-
+    
     public static boolean excuteUpdate(String sql, Object... args) throws Exception {
         PreparedStatement pstm = prepareStatement(sql, args);
         boolean result = pstm.executeUpdate() > 0;
         pstm.getConnection().close();
         return result;
     }
-
+    
     public static ResultSet excuteQuery(String sql, Object... arsg) throws Exception {
-
-        PreparedStatement pstmt = prepareStatement(sql, arsg);
-
-        return pstmt.executeQuery();
-
-    }
         
-
+        PreparedStatement pstmt = prepareStatement(sql, arsg);
+        
+        return pstmt.executeQuery();
+        
+    }
+    
 }

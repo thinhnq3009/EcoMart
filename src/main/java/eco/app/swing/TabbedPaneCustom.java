@@ -4,7 +4,7 @@
  */
 package eco.app.swing;
 
-import eco.app.panel.MainFrom;
+import eco.app.panel.EmployeePanel;
 import eco.app.helper.SaveData;
 
 import java.awt.Color;

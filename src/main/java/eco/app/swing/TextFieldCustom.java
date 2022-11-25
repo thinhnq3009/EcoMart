@@ -6,7 +6,7 @@ package eco.app.swing;
 
 import eco.app.event.ValidateActionAdapter;
 import eco.app.helper.SaveData;
-import eco.app.swing.shadow.RippleEffect;
+import eco.app.swing.effect.RippleEffect;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -47,7 +47,7 @@ public class TextFieldCustom extends JTextField {
         focusEffect();
 
         rippleEffect.setRippleColor(SaveData.TXT_RIPPLE_EFFECT);
-
+       
     }
 
     @Override
@@ -155,6 +155,10 @@ public class TextFieldCustom extends JTextField {
 
         });
 
+    }
+    
+    public void runValid() {
+        validateAction.validAction(this);
     }
 
     public String getRegex() {

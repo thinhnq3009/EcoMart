@@ -5,7 +5,7 @@
 package eco.app.swing;
 
 import eco.app.event.ToggleListener;
-import eco.app.swing.shadow.ShadowRenderer;
+import eco.app.swing.effect.ShadowRenderer;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;

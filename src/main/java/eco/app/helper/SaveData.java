@@ -5,6 +5,7 @@
 package eco.app.helper;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 /**
  *
@@ -63,5 +64,11 @@ public class SaveData {
     Product item
      */
     public static Color PRODUCT_ITEM = new Color(124, 227, 247);
-
+    public static Dimension SIZE = new Dimension(125, 125);
+    
+    
+    /*
+    DATE
+    */
+    public static String PATTENT = "dd/MM/yyyy";
 }

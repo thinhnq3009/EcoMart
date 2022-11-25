@@ -16,7 +16,9 @@ import java.util.List;
 public class EntityHelper {
 
     /**
-     * Trả về Object[] chứa các dữ liệu của các <code>fieldName</code> đã nhân vào
+     * Trả về Object[] chứa các dữ liệu của các <code>fieldName</code> đã nhân
+     * vào
+     *
      * @param e
      * @param fieldName
      * @return
@@ -27,10 +29,26 @@ public class EntityHelper {
             return null;
         }
 
+        Field[] fields = e.getClass().getDeclaredFields();
+
+        if (fieldName[0].equals("all")) {
+            Object value[] = new Object[fields.length];
+            int counter = 0;
+            for (Field field : fields) {
+                try {
+                    value[counter] = field.get(e);
+                } catch (IllegalAccessException | IllegalArgumentException er) {
+                    value[counter] = "Can't get";
+                } finally {
+                    counter++;
+                }
+            }
+
+            return value;
+        }
+
         Object[] value = new Object[fieldName.length];
         int counter = 0;
-
-        Field[] fields = e.getClass().getDeclaredFields();
 
         for (String name : fieldName) {
             for (Field field : fields) {
@@ -51,5 +69,5 @@ public class EntityHelper {
         return value;
     }
 
-
+    
 }

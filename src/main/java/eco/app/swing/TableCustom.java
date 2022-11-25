@@ -40,6 +40,16 @@ public class TableCustom extends JTable {
 
         setMinimumSize(new Dimension(100, 100));
 
+//        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+//        centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+//        setDefaultRenderer(String.class, centerRenderer);
+//
+        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+        leftRenderer.setHorizontalAlignment(JLabel.LEFT);
+        setDefaultRenderer(Integer.class, leftRenderer);
+        setDefaultRenderer(Long.class, leftRenderer);
+        setDefaultRenderer(Double.class, leftRenderer);
+
         setSelectionBackground(SaveData.TBL_SELECTED_BG_COLOR);
         setSelectionForeground(SaveData.TBL_SELECTED_FG_COLOR);
 

@@ -59,6 +59,17 @@ public class EmployeeDao extends EntityDao {
 
         return readResultSet(rs);
     }
+    
+
+    public Employee findByUsername(String username) throws Exception {
+        String sql = "SELECT * FROM Employee WHERE username = ?";
+
+        ResultSet rs = DatabaseHelper.excuteQuery(sql, username);
+
+        List<Employee> result = readResultSet(rs);
+        
+        return result.isEmpty() ? null : result.get(0);
+    }
 
     @Override
     public boolean update(Entity e) throws Exception {

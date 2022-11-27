@@ -8,6 +8,6 @@ package eco.app.event;
  *
  * @author Lenovo
  */
-public abstract class LinkEventAdapter {
+public interface LinkEventAdapter {
     public abstract void linkClick() ;
 }

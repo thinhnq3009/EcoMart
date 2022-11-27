@@ -4,8 +4,21 @@
  */
 package eco.app.component;
 
+import eco.app.entity.Product;
+import eco.app.event.ProductItemLisener;
+import eco.app.helper.Convertor;
+import eco.app.helper.ImageHelper;
 import eco.app.helper.SaveData;
 import java.awt.BorderLayout;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -13,14 +26,50 @@ import java.awt.BorderLayout;
  */
 public class ProductItem extends javax.swing.JPanel {
 
-    /**
-     * Creates new form Product
-     */
-    public ProductItem() {
+    private Product product;
+    private List<ProductItemLisener> events = new ArrayList<>();
+
+    public ProductItem(Product product) {
+        this.product = product;
         initComponents();
+        showProduct();
         this.add(pnPlus, BorderLayout.EAST);
         setBackground(SaveData.PRODUCT_ITEM);
         btnPlus.setRound(50);
+        btnPlus.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                for (ProductItemLisener evt : events) {
+                    evt.onClick(product, txtQuantity);
+                }
+            }
+            
+        });
+    }
+
+
+    private void showProduct() {
+        lblName.setText(product.getName());
+        lblPrice.setText("Price: " + Convertor.toCurency(product.getPrice()) + "VND");
+        lblQuantity.setText("Quantity: " + product.getQuantity());
+        lblDescription.setText(product.getDescription());
+        lblDiscount.setText("Discount: " + product.getDiscountText());
+        lblBrandAndCategory.setText("Brand: " + product.getBrand().getName() + " - Category: " + product.getCategory().getName());
+
+        try {
+            Image image = ImageHelper.createImage(product.getImage(), "png");
+
+            Image imageResize = ImageHelper.resize(image);
+
+            lblImage.setIcon(new ImageIcon(imageResize));
+
+        } catch (IOException ex) {
+            Logger.getLogger(ProductItem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void addPlusListener(ProductItemLisener lisener) {
+        events.add(lisener);
     }
 
     /**
@@ -33,31 +82,33 @@ public class ProductItem extends javax.swing.JPanel {
     private void initComponents() {
 
         pnPlus = new javax.swing.JPanel();
-        textFieldCustom1 = new eco.app.myswing.TextFieldCustom();
+        txtQuantity = new eco.app.myswing.TextFieldCustom();
         btnPlus = new eco.app.myswing.ButtonRandius();
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        lblName = new javax.swing.JLabel();
+        lblBrandAndCategory = new javax.swing.JLabel();
+        lblDescription = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        lblDiscount = new javax.swing.JLabel();
+        lblQuantity = new javax.swing.JLabel();
+        lblPrice = new javax.swing.JLabel();
+        lblImage = new javax.swing.JLabel();
 
         pnPlus.setOpaque(false);
 
-        textFieldCustom1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        textFieldCustom1.setText("1");
-        textFieldCustom1.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
-        textFieldCustom1.addMouseListener(new java.awt.event.MouseAdapter() {
+        txtQuantity.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtQuantity.setText("1");
+        txtQuantity.setCanEmpty(false);
+        txtQuantity.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        txtQuantity.setRegex("[0-9]+ ");
+        txtQuantity.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                textFieldCustom1MouseClicked(evt);
+                txtQuantityMouseClicked(evt);
             }
         });
-        textFieldCustom1.addActionListener(new java.awt.event.ActionListener() {
+        txtQuantity.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldCustom1ActionPerformed(evt);
+                txtQuantityActionPerformed(evt);
             }
         });
 
@@ -76,49 +127,49 @@ public class ProductItem extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(pnPlusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnPlus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(textFieldCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnPlusLayout.setVerticalGroup(
             pnPlusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnPlusLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(textFieldCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnPlus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setLayout(new java.awt.BorderLayout());
 
         jPanel1.setOpaque(false);
 
-        jLabel2.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
-        jLabel2.setText("Product Item");
+        lblName.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
+        lblName.setText("Product Item");
 
-        jLabel3.setFont(new java.awt.Font("Roboto", 2, 12)); // NOI18N
-        jLabel3.setText("Brand: Pessi");
+        lblBrandAndCategory.setFont(new java.awt.Font("Roboto", 2, 12)); // NOI18N
+        lblBrandAndCategory.setText("Brand: Pessi");
 
-        jLabel4.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
-        jLabel4.setText("Descriptions");
-        jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblDescription.setFont(new java.awt.Font("Roboto", 0, 11)); // NOI18N
+        lblDescription.setText("Descriptions");
+        lblDescription.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jPanel2.setBackground(new java.awt.Color(153, 204, 255));
         jPanel2.setFont(new java.awt.Font("Roboto", 2, 18)); // NOI18N
         jPanel2.setOpaque(false);
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 5));
 
-        jLabel6.setFont(new java.awt.Font("Roboto", 2, 14)); // NOI18N
-        jLabel6.setText("Discount: 5%");
-        jPanel2.add(jLabel6);
+        lblDiscount.setFont(new java.awt.Font("Roboto", 2, 14)); // NOI18N
+        lblDiscount.setText("Discount: 5%");
+        jPanel2.add(lblDiscount);
 
-        jLabel7.setFont(new java.awt.Font("Roboto", 2, 14)); // NOI18N
-        jLabel7.setText("Quantity: 999");
-        jPanel2.add(jLabel7);
+        lblQuantity.setFont(new java.awt.Font("Roboto", 2, 14)); // NOI18N
+        lblQuantity.setText("Quantity: 999");
+        jPanel2.add(lblQuantity);
 
-        jLabel8.setFont(new java.awt.Font("Roboto", 2, 14)); // NOI18N
-        jLabel8.setText("Price: 34.499 VND");
-        jPanel2.add(jLabel8);
+        lblPrice.setFont(new java.awt.Font("Roboto", 2, 14)); // NOI18N
+        lblPrice.setText("Price: 34.499 VND");
+        jPanel2.add(lblPrice);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -127,21 +178,21 @@ public class ProductItem extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE))
+                    .addComponent(lblDescription, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
+                    .addComponent(lblBrandAndCategory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblName, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jLabel3)
+                .addComponent(lblBrandAndCategory)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                .addComponent(lblDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -149,36 +200,36 @@ public class ProductItem extends javax.swing.JPanel {
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eco/app/icon/temp-product-item.png"))); // NOI18N
-        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        add(jLabel1, java.awt.BorderLayout.LINE_START);
+        lblImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eco/app/icon/temp-product-item.png"))); // NOI18N
+        lblImage.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        add(lblImage, java.awt.BorderLayout.LINE_START);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void textFieldCustom1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldCustom1ActionPerformed
+    private void txtQuantityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuantityActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_textFieldCustom1ActionPerformed
+    }//GEN-LAST:event_txtQuantityActionPerformed
 
     private void btnPlusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlusActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPlusActionPerformed
 
-    private void textFieldCustom1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textFieldCustom1MouseClicked
-        textFieldCustom1.selectAll();
-    }//GEN-LAST:event_textFieldCustom1MouseClicked
+    private void txtQuantityMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtQuantityMouseClicked
+        txtQuantity.selectAll();
+    }//GEN-LAST:event_txtQuantityMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private eco.app.myswing.ButtonRandius btnPlus;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lblBrandAndCategory;
+    private javax.swing.JLabel lblDescription;
+    private javax.swing.JLabel lblDiscount;
+    private javax.swing.JLabel lblImage;
+    private javax.swing.JLabel lblName;
+    private javax.swing.JLabel lblPrice;
+    private javax.swing.JLabel lblQuantity;
     private javax.swing.JPanel pnPlus;
-    private eco.app.myswing.TextFieldCustom textFieldCustom1;
+    private eco.app.myswing.TextFieldCustom txtQuantity;
     // End of variables declaration//GEN-END:variables
 }

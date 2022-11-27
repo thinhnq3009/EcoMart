@@ -5,10 +5,18 @@
 package eco.app.panel;
 
 import eco.app.component.ProductItem;
+import eco.app.dao.BrandDao;
+import eco.app.dao.CategoryDao;
+import eco.app.dao.ProductDao;
+import eco.app.entity.Brand;
+import eco.app.entity.Category;
+import eco.app.entity.Product;
+import eco.app.helper.MessageHelper;
 import eco.app.helper.SaveData;
 import eco.app.myswing.ScrollBarCustom;
-import eco.app.myswing.TabbedPaneCustom;
 import java.awt.Color;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -17,10 +25,27 @@ import net.miginfocom.swing.MigLayout;
  */
 public class OrderPanel extends javax.swing.JPanel {
 
+    private class OrderItem {
+        Product product;
+        int quantity;
+
+        public OrderItem(Product product, int quantity) {
+            this.product = product;
+            this.quantity = quantity;
+        }
+        
+        public int getTotal() {
+            return product.getPrice() * quantity;
+        }
+    }
+
+    
     /**
      * Creates new form OrderPanel
      */
     private MigLayout layout = new MigLayout("fill", "0[]10[]0", "0[]0");
+    private List<Product> products;
+    private List<OrderItem> productsSelected;
 
     public OrderPanel() {
         initComponents();
@@ -39,27 +64,56 @@ public class OrderPanel extends javax.swing.JPanel {
         sbc.setForeground(new Color(0, 102, 255));
         sbc.setBackground(scProduct.getBackground());
         scProduct.setVerticalScrollBar(sbc);
+        scProduct.setHorizontalScrollBar(sbc);
 
         //
         pnListProduct.setLayout(new MigLayout("fillx, insets ", "0[]0", "[]5[]"));
-        addProduct();
+
+        getAllProduct();
+        fillComboBox();
+
     }
 
-    public void addProduct() {
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
-        pnListProduct.add(new ProductItem(), "wrap, w 100%");
+    private void fillComboBox() {
+        try {
+            BrandDao brandDao = new BrandDao();
+            List<Brand> brands = brandDao.getAll();
+            DefaultComboBoxModel brandModel = (DefaultComboBoxModel) cbbBrand.getModel();
+            for (Brand brand : brands) {
+                brandModel.addElement(brand);
+            }
+
+            CategoryDao categoryDao = new CategoryDao();
+            List<Category> categories = categoryDao.getAll();
+            DefaultComboBoxModel categoryModel = (DefaultComboBoxModel) cbbCategory.getModel();
+            for (Category category : categories) {
+                categoryModel.addElement(category);
+            }
+
+        } catch (Exception e) {
+            MessageHelper.showException(this, e);
+        }
+    }
+
+    private void getAllProduct() {
+        try {
+
+            ProductDao dao = new ProductDao();
+
+            products = dao.getAll();
+
+            for (Product product : products) {
+                addProduct(product);
+            }
+
+        } catch (Exception e) {
+            MessageHelper.showException(this, e);
+        }
+    }
+
+    public void addProduct(Product product) {
+        ProductItem item = new ProductItem(product);
+        pnListProduct.add(item, "wrap, w 100%");
     }
 
     /**
@@ -73,45 +127,50 @@ public class OrderPanel extends javax.swing.JPanel {
 
         pnFindProduct = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        textFieldCustom1 = new eco.app.myswing.TextFieldCustom();
-        buttonRandius1 = new eco.app.myswing.ButtonRandius();
+        txtFind = new eco.app.myswing.TextFieldCustom();
+        btnReload = new eco.app.myswing.ButtonRandius();
         jLabel1 = new javax.swing.JLabel();
         cboCategory = new javax.swing.JLabel();
-        comboBoxCustom1 = new eco.app.myswing.ComboBoxCustom();
-        cboBrand = new eco.app.myswing.ComboBoxCustom();
+        cbbCategory = new eco.app.myswing.ComboBoxCustom();
+        cbbBrand = new eco.app.myswing.ComboBoxCustom();
         scProduct = new javax.swing.JScrollPane();
         pnListProduct = new javax.swing.JPanel();
         pnOrder = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tableCustom1 = new eco.app.myswing.TableCustom();
+        tblSelectedProduct = new eco.app.myswing.TableCustom();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        textFieldCustom2 = new eco.app.myswing.TextFieldCustom();
+        txtCustomer = new eco.app.myswing.TextFieldCustom();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        textFieldCustom3 = new eco.app.myswing.TextFieldCustom();
+        txtVoncher = new eco.app.myswing.TextFieldCustom();
         jPanel6 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        textFieldCustom4 = new eco.app.myswing.TextFieldCustom();
+        txtDiscount = new eco.app.myswing.TextFieldCustom();
         jPanel7 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        textFieldCustom5 = new eco.app.myswing.TextFieldCustom();
+        txtTotal = new eco.app.myswing.TextFieldCustom();
         jPanel3 = new javax.swing.JPanel();
-        buttonRandius2 = new eco.app.myswing.ButtonRandius();
-        buttonRandius3 = new eco.app.myswing.ButtonRandius();
-        buttonRandius4 = new eco.app.myswing.ButtonRandius();
+        btnDelete = new eco.app.myswing.ButtonRandius();
+        btnSave = new eco.app.myswing.ButtonRandius();
+        btnComplete = new eco.app.myswing.ButtonRandius();
 
         pnFindProduct.setBackground(SaveData.BG_CONTENT );
 
         jPanel2.setOpaque(false);
 
-        textFieldCustom1.setText("Search product");
-        textFieldCustom1.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtFind.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
 
-        buttonRandius1.setText("Search");
-        buttonRandius1.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eco/app/icon/icons8_sync_25px.png"))); // NOI18N
+        btnReload.setText("Reload");
+        btnReload.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        btnReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReloadActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Roboto", 1, 12)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -121,9 +180,9 @@ public class OrderPanel extends javax.swing.JPanel {
         cboCategory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         cboCategory.setText("Category: ");
 
-        cboBrand.addActionListener(new java.awt.event.ActionListener() {
+        cbbBrand.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboBrandActionPerformed(evt);
+                cbbBrandActionPerformed(evt);
             }
         });
 
@@ -132,31 +191,36 @@ public class OrderPanel extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(textFieldCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonRandius1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtFind, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cboBrand, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbbBrand, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cboCategory)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(comboBoxCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38))
+                .addComponent(cbbCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnReload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(textFieldCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonRandius1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(comboBoxCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cboCategory)
-                    .addComponent(cboBrand, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnReload, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cbbCategory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(cbbBrand, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(txtFind, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cboCategory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
 
         scProduct.setForeground(new java.awt.Color(204, 204, 255));
@@ -167,11 +231,11 @@ public class OrderPanel extends javax.swing.JPanel {
         pnListProduct.setLayout(pnListProductLayout);
         pnListProductLayout.setHorizontalGroup(
             pnListProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 691, Short.MAX_VALUE)
+            .addGap(0, 629, Short.MAX_VALUE)
         );
         pnListProductLayout.setVerticalGroup(
             pnListProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 258, Short.MAX_VALUE)
+            .addGap(0, 209, Short.MAX_VALUE)
         );
 
         scProduct.setViewportView(pnListProduct);
@@ -191,8 +255,8 @@ public class OrderPanel extends javax.swing.JPanel {
             pnFindProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnFindProductLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(scProduct)
                 .addContainerGap())
         );
@@ -208,7 +272,7 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Order Detail");
 
-        tableCustom1.setModel(new javax.swing.table.DefaultTableModel(
+        tblSelectedProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -219,7 +283,7 @@ public class OrderPanel extends javax.swing.JPanel {
                 "Product", "Quantity", "Price", "Total"
             }
         ));
-        jScrollPane1.setViewportView(tableCustom1);
+        jScrollPane1.setViewportView(tblSelectedProduct);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
         jPanel1.setOpaque(false);
@@ -235,10 +299,10 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel3.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel4.add(jLabel3, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom2.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        textFieldCustom2.setText("Nguyen Van A");
-        textFieldCustom2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel4.add(textFieldCustom2, java.awt.BorderLayout.CENTER);
+        txtCustomer.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtCustomer.setText("Nguyen Van A");
+        txtCustomer.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel4.add(txtCustomer, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(jPanel4);
 
@@ -252,10 +316,10 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel4.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel5.add(jLabel4, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom3.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        textFieldCustom3.setText("SELL50%");
-        textFieldCustom3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel5.add(textFieldCustom3, java.awt.BorderLayout.CENTER);
+        txtVoncher.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtVoncher.setText("SELL50%");
+        txtVoncher.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel5.add(txtVoncher, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(jPanel5);
 
@@ -269,15 +333,15 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel5.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel6.add(jLabel5, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom4.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        textFieldCustom4.setText("-30.000 VND");
-        textFieldCustom4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        textFieldCustom4.addActionListener(new java.awt.event.ActionListener() {
+        txtDiscount.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtDiscount.setText("-30.000 VND");
+        txtDiscount.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtDiscount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldCustom4ActionPerformed(evt);
+                txtDiscountActionPerformed(evt);
             }
         });
-        jPanel6.add(textFieldCustom4, java.awt.BorderLayout.CENTER);
+        jPanel6.add(txtDiscount, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(jPanel6);
 
@@ -291,31 +355,31 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel6.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel7.add(jLabel6, java.awt.BorderLayout.LINE_START);
 
-        textFieldCustom5.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        textFieldCustom5.setText("149.699 VND");
-        textFieldCustom5.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel7.add(textFieldCustom5, java.awt.BorderLayout.CENTER);
+        txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTotal.setText("149.699 VND");
+        txtTotal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel7.add(txtTotal, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(jPanel7);
 
         jPanel3.setOpaque(false);
         jPanel3.setLayout(new java.awt.GridLayout(1, 0));
 
-        buttonRandius2.setBackground(SaveData.BTN_DANGER);
-        buttonRandius2.setText("Delete");
-        buttonRandius2.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
-        jPanel3.add(buttonRandius2);
+        btnDelete.setBackground(SaveData.BTN_DANGER);
+        btnDelete.setText("Delete");
+        btnDelete.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
+        jPanel3.add(btnDelete);
 
-        buttonRandius3.setBackground(SaveData.BTN_WARNING
+        btnSave.setBackground(SaveData.BTN_WARNING
         );
-        buttonRandius3.setText("Save");
-        buttonRandius3.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
-        jPanel3.add(buttonRandius3);
+        btnSave.setText("Save");
+        btnSave.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
+        jPanel3.add(btnSave);
 
-        buttonRandius4.setBackground(SaveData.BTN_SUCCESS);
-        buttonRandius4.setText("Complete");
-        buttonRandius4.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
-        jPanel3.add(buttonRandius4);
+        btnComplete.setBackground(SaveData.BTN_SUCCESS);
+        btnComplete.setText("Complete");
+        btnComplete.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
+        jPanel3.add(btnComplete);
 
         javax.swing.GroupLayout pnOrderLayout = new javax.swing.GroupLayout(pnOrder);
         pnOrder.setLayout(pnOrderLayout);
@@ -357,13 +421,13 @@ public class OrderPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void textFieldCustom4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldCustom4ActionPerformed
+    private void txtDiscountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDiscountActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_textFieldCustom4ActionPerformed
+    }//GEN-LAST:event_txtDiscountActionPerformed
 
-    private void cboBrandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboBrandActionPerformed
+    private void cbbBrandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbBrandActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cboBrandActionPerformed
+    }//GEN-LAST:event_cbbBrandActionPerformed
 
     private void pnOrderComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pnOrderComponentResized
         if (pnOrder.getWidth() <= 300) {
@@ -371,15 +435,19 @@ public class OrderPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_pnOrderComponentResized
 
+    private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
+        getAllProduct();
+    }//GEN-LAST:event_btnReloadActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private eco.app.myswing.ButtonRandius buttonRandius1;
-    private eco.app.myswing.ButtonRandius buttonRandius2;
-    private eco.app.myswing.ButtonRandius buttonRandius3;
-    private eco.app.myswing.ButtonRandius buttonRandius4;
-    private eco.app.myswing.ComboBoxCustom cboBrand;
+    private eco.app.myswing.ButtonRandius btnComplete;
+    private eco.app.myswing.ButtonRandius btnDelete;
+    private eco.app.myswing.ButtonRandius btnReload;
+    private eco.app.myswing.ButtonRandius btnSave;
+    private eco.app.myswing.ComboBoxCustom cbbBrand;
+    private eco.app.myswing.ComboBoxCustom cbbCategory;
     private javax.swing.JLabel cboCategory;
-    private eco.app.myswing.ComboBoxCustom comboBoxCustom1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -398,11 +466,11 @@ public class OrderPanel extends javax.swing.JPanel {
     private javax.swing.JPanel pnListProduct;
     private javax.swing.JPanel pnOrder;
     private javax.swing.JScrollPane scProduct;
-    private eco.app.myswing.TableCustom tableCustom1;
-    private eco.app.myswing.TextFieldCustom textFieldCustom1;
-    private eco.app.myswing.TextFieldCustom textFieldCustom2;
-    private eco.app.myswing.TextFieldCustom textFieldCustom3;
-    private eco.app.myswing.TextFieldCustom textFieldCustom4;
-    private eco.app.myswing.TextFieldCustom textFieldCustom5;
+    private eco.app.myswing.TableCustom tblSelectedProduct;
+    private eco.app.myswing.TextFieldCustom txtCustomer;
+    private eco.app.myswing.TextFieldCustom txtDiscount;
+    private eco.app.myswing.TextFieldCustom txtFind;
+    private eco.app.myswing.TextFieldCustom txtTotal;
+    private eco.app.myswing.TextFieldCustom txtVoncher;
     // End of variables declaration//GEN-END:variables
 }

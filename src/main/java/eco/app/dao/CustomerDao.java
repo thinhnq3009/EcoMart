@@ -14,7 +14,12 @@ import java.util.List;
  * @author ThinhNQ
  */
 public class CustomerDao extends EntityDao {
+    
+    public CustomerDao() {
+    }
 
+    
+    
     private List<Customer> readResultSet(ResultSet rs) throws Exception {
         List<Customer> customers = new ArrayList<>();
 
@@ -84,21 +89,33 @@ public class CustomerDao extends EntityDao {
     public boolean update(Entity e) throws Exception {
 
         validate(e);
-
-        String sql = "UPDATE Customer"
-                + " SET "
-                + " fullname = ?,"
-                + " email = ?,"
-                + " rank = ?,"
-                + " spent = ?,"
-                + " coin = ?"
+        /*
+         * 
+         * UPDATE [dbo].[Customer]
+         * SET [fullname] = <fullname, nvarchar(100),>
+         * ,[gender] = <gender, bit,>
+         * ,[email] = <email, nvarchar(50),>
+         * ,[phone] = <phone, nchar(10),>
+         * ,[address] = <address, nvarchar(100),>
+         * ,[note] = <note, nvarchar(max),>
+         * WHERE <Search Conditions,,>
+         * GO
+         */
+        String sql = "UPDATE [dbo].[Customer]"
+                + " SET fullname = ?"
+                + " ,gender = ?"
+                + " ,email = ?"
+                + " ,phone = ?"
+                + " ,address = ?"
+                + " ,note = ?"
                 + " WHERE id = ?";
         Object[] obj = EntityHelper.getData(e,
                 "fullname",
+                "gender",
                 "email",
-                "rank",
-                "spent",
-                "coin",
+                "phone",
+                "address",
+                "note",
                 "id");
         return DatabaseHelper.excuteUpdate(sql, obj);
     }
@@ -118,14 +135,33 @@ public class CustomerDao extends EntityDao {
 
         validate(e);
 
-        String sql = "INSERT INTO Customer (fullname, email, rank, spent, coin) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO Customer (fullname, gender, email, phone, address, coin, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
         Object[] obj = EntityHelper.getData(e,
                 "fullname",
+                "gender",
                 "email",
-                "rank",
-                "spent",
-                "coin");
+                "phone",
+                "address",
+                "coin",
+                "note");
         return DatabaseHelper.excuteUpdate(sql, obj);
+    }
+
+    public void getSpent(Customer customer) throws Exception {
+
+        int id = customer.getId();
+
+        String sql = "EXEC getCustomerSpent ?";
+
+        ResultSet rs = DatabaseHelper.excuteQuery(sql, id);
+
+        if (rs.next()) {
+            int spent = rs.getInt("totalSpent");
+            int discount = rs.getInt("totalDiscount");
+
+            customer.setSpent(spent - discount);
+        }
+
     }
 
 }

@@ -34,11 +34,11 @@ public class MessageHelper {
     }
 
     public static void showMessage(Component component, String message) {
-        MessageDialog dialog = openDialog(component);
-        dialog.setText(message);
-        dialog.hidenButton(DialogButton.BTN_NO, DialogButton.BTN_CANCEL);
-        dialog.setIcon(new ImageHelper().openImage("message.png"));
-        dialog.setVisible(true);
+//        MessageDialog dialog = openDialog(component);
+//        dialog.setText(message);
+//        dialog.hidenButton(DialogButton.BTN_NO, DialogButton.BTN_CANCEL);
+//        dialog.setIcon(new ImageHelper().openImage("message.png"));
+//        dialog.setVisible(true);
     }
 
     public static void showException(Component component, Exception e) {

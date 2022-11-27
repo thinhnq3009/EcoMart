@@ -6,8 +6,6 @@ package eco.app.component;
 
 import eco.app.myswing.MenuItem;
 import eco.app.myswing.ScrollBarCustom;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -23,9 +21,6 @@ import static eco.app.helper.SaveData.*;
  */
 public class Menu extends javax.swing.JPanel {
 
-    private MigLayout layout;
-    private MigLayout layoutMenu;
-    private Animator animator;
     private List<MenuItem> menuItems = new ArrayList<>();
 
     /**

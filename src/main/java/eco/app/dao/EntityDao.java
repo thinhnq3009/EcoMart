@@ -11,7 +11,13 @@ import eco.app.entity.Entity;
  * @author Lenovo
  */
 public abstract class EntityDao {
-    
+//
+//    static int counter = 0;
+//
+//    public EntityDao() {
+//        System.out.println(getClass().getName() + ++counter);
+//    }
+
     protected abstract void validate(Entity e) throws Exception;
 
     public abstract boolean update(Entity e) throws Exception;

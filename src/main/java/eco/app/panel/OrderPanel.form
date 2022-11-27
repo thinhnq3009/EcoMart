@@ -25,11 +25,11 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jPanel2" min="-2" pref="61" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Component id="scProduct" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -44,18 +44,18 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="textFieldCustom1" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="buttonRandius1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="txtFind" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" pref="59" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="cboBrand" min="-2" pref="136" max="-2" attributes="0"/>
+                      <Component id="cbbBrand" min="-2" pref="136" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Component id="cboCategory" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                      <Component id="comboBoxCustom1" min="-2" pref="136" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                      <Component id="cbbCategory" min="-2" pref="136" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnReload" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -63,35 +63,49 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="textFieldCustom1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="buttonRandius1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="comboBoxCustom1" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
-                          <Component id="cboCategory" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cboBrand" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="btnReload" pref="62" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel1" max="32767" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="cbbCategory" max="32767" attributes="0"/>
+                                          <Component id="cbbBrand" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Component id="txtFind" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="cboCategory" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom1">
+            <Component class="eco.app.myswing.TextFieldCustom" name="txtFind">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Search product"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Roboto" size="12" style="0"/>
                 </Property>
               </Properties>
             </Component>
-            <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius1">
+            <Component class="eco.app.myswing.ButtonRandius" name="btnReload">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Search"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/eco/app/icon/icons8_sync_25px.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Reload"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Roboto" size="12" style="0"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnReloadActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
@@ -111,11 +125,11 @@
                 <Property name="text" type="java.lang.String" value="Category: "/>
               </Properties>
             </Component>
-            <Component class="eco.app.myswing.ComboBoxCustom" name="comboBoxCustom1">
+            <Component class="eco.app.myswing.ComboBoxCustom" name="cbbCategory">
             </Component>
-            <Component class="eco.app.myswing.ComboBoxCustom" name="cboBrand">
+            <Component class="eco.app.myswing.ComboBoxCustom" name="cbbBrand">
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboBrandActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbbBrandActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -139,12 +153,12 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="691" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="629" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="258" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="209" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -210,7 +224,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="eco.app.myswing.TableCustom" name="tableCustom1">
+            <Component class="eco.app.myswing.TableCustom" name="tblSelectedProduct">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="4" rowCount="4">
@@ -271,7 +285,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom2">
+                <Component class="eco.app.myswing.TextFieldCustom" name="txtCustomer">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="Nguyen Van A"/>
@@ -318,7 +332,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom3">
+                <Component class="eco.app.myswing.TextFieldCustom" name="txtVoncher">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="SELL50%"/>
@@ -365,7 +379,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom4">
+                <Component class="eco.app.myswing.TextFieldCustom" name="txtDiscount">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="-30.000 VND"/>
@@ -374,7 +388,7 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textFieldCustom4ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtDiscountActionPerformed"/>
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
@@ -415,7 +429,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="eco.app.myswing.TextFieldCustom" name="textFieldCustom5">
+                <Component class="eco.app.myswing.TextFieldCustom" name="txtTotal">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="149.699 VND"/>
@@ -443,7 +457,7 @@
             <Property name="rows" type="int" value="1"/>
           </Layout>
           <SubComponents>
-            <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius2">
+            <Component class="eco.app.myswing.ButtonRandius" name="btnDelete">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="SaveData.BTN_DANGER" type="code"/>
@@ -454,7 +468,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius3">
+            <Component class="eco.app.myswing.ButtonRandius" name="btnSave">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="SaveData.BTN_WARNING&#xa;" type="code"/>
@@ -465,7 +479,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="eco.app.myswing.ButtonRandius" name="buttonRandius4">
+            <Component class="eco.app.myswing.ButtonRandius" name="btnComplete">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="SaveData.BTN_SUCCESS" type="code"/>

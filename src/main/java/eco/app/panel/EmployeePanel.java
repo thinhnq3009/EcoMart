@@ -39,10 +39,10 @@ public class EmployeePanel extends javax.swing.JPanel {
     private final int W_CLOSE = 61;
     private final int W_OPEN = 205;
 
-    private MenuItem customersItem = new MenuItem(new MenuModel("Customers", "customer.png"));
-    private MenuItem productsItem = new MenuItem(new MenuModel("Products", "product.png"));
-    private MenuItem orderItem = new MenuItem(new MenuModel("Order", "order.png"));
-    private MenuItem inforItem = new MenuItem(new MenuModel("Infor", "infor.png"));
+    private final MenuItem customersItem = new MenuItem(new MenuModel("Customers", "customer.png"));
+    private final MenuItem productsItem = new MenuItem(new MenuModel("Products", "product.png"));
+    private final MenuItem orderItem = new MenuItem(new MenuModel("Order", "order.png"));
+    private final MenuItem inforItem = new MenuItem(new MenuModel("Infor", "infor.png"));
 
     public EmployeePanel() {
         initComponents();

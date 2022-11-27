@@ -4,10 +4,8 @@
  */
 package eco.app.entity;
 
-import eco.app.dao.ManageDao;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,10 +33,11 @@ public class EntityHelper {
         if (fieldName[0].equals("all")) {
             Object value[] = new Object[fields.length + 1];
             value[0] = e.getId();
-            int counter = 0;
+            int counter = 1;
             for (Field field : fields) {
                 try {
                     value[counter] = field.get(e);
+                    System.out.println(field.getName() + " " + field.get(e));
                 } catch (IllegalAccessException | IllegalArgumentException er) {
                     value[counter] = "Can't get";
                 } finally {

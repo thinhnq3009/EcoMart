@@ -1,21 +1,30 @@
 package eco.app.main;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import eco.app.dao.CustomerDao;
+import eco.app.entity.Customer;
+import eco.app.entity.EntityHelper;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
  * @author ThinhNQ
  */
 public class NewClass {
-
+    
     public static void main(String[] args) throws Exception {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY");
-        Date date1 = format.parse("20/11/2022");
-        Date date2 = format.parse("21/11/2022");
-
-        System.out.println("1: " + (long)date1.getTime());
-        System.out.println("2: " + (long)date2.getTime());
-
+        try {
+            CustomerDao dao = new CustomerDao();
+            
+            List<Customer> list = dao.getAll();
+            
+            for (Customer c : list) {
+                System.out.println(Arrays.toString(EntityHelper.getData(c, "all")));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
 }

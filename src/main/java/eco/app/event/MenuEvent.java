@@ -8,6 +8,6 @@ package eco.app.event;
  *
  * @author Lenovo
  */
-public abstract class MenuEvent {
-    abstract public void menuClick();
+public interface MenuEvent {
+    public void menuClick();
 }

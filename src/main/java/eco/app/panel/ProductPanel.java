@@ -66,8 +66,8 @@ public class ProductPanel extends javax.swing.JPanel {
     
     private void init() {
         setLayout(layout);
-        add(pnFormProduct, "w 650!, h 100%");
-        add(pnListProduct, "w 100%, h 100%");
+        add(pnFormProduct, "w 62%, h 100%");
+        add(pnListProduct, "w 38%, h 100%");
 
         //
         loadComboBox();

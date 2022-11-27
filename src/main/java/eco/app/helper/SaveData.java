@@ -65,10 +65,16 @@ public class SaveData {
      */
     public static Color PRODUCT_ITEM = new Color(124, 227, 247);
     public static Dimension SIZE = new Dimension(125, 125);
-    
-    
+
     /*
     DATE
-    */
+     */
     public static String PATTENT = "dd/MM/yyyy";
+
+    /*
+    RANK 
+     */
+    public static int RANK_SILVER = 1000000;
+    public static int RANK_BRONZE = 2000000;
+    public static int RANK_GOLD = 5000000;
 }

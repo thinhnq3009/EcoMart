@@ -47,7 +47,7 @@ public class TextFieldCustom extends JTextField {
         focusEffect();
 
         rippleEffect.setRippleColor(SaveData.TXT_RIPPLE_EFFECT);
-       
+
     }
 
     @Override
@@ -156,7 +156,7 @@ public class TextFieldCustom extends JTextField {
         });
 
     }
-    
+
     public void runValid() {
         validateAction.validAction(this);
     }
@@ -217,6 +217,10 @@ public class TextFieldCustom extends JTextField {
     }
 
     public void check(StringBuilder sb, String message) {
+        if (validateAction == null) {
+            return;
+        }
+
         if (validateText()) {
             validateAction.validAction(this);
         } else {

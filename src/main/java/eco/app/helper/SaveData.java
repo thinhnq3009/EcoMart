@@ -70,6 +70,7 @@ public class SaveData {
     DATE
      */
     public static String PATTENT = "dd/MM/yyyy";
+     public static String PATTENT_DATETIME = "dd/MM/yyyy hh:mm";
 
     /*
     RANK 

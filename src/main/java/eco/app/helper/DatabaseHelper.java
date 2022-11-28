@@ -18,12 +18,15 @@ import javax.sql.rowset.serial.SerialBlob;
  */
 public class DatabaseHelper {
 
+    static int counter = 0;
+    
     public static Connection openConnect() throws Exception {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         String connectUrl = "jdbc:sqlserver://localhost;database=EcoMart;";
         String userDB = "sa";
         String passworDB = "songlong";
         Connection conn = DriverManager.getConnection(connectUrl, userDB, passworDB);
+        System.out.println("Connect " + ++counter + " time.");
         return conn;
     }
 

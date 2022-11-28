@@ -57,8 +57,15 @@ public class Voucher extends Entity {
         this.minApply = minApply;
     }
 
-    public double getDiscount() {
-        return discount;
+    public double getDiscount(int price) {
+        if (price >= minApply) {
+            if (discount < 1) {
+                return price * discount;
+            } else {
+                return discount;
+            }
+        }
+        return 0;
     }
 
     public void setDiscount(double discount) {
@@ -105,7 +112,7 @@ public class Voucher extends Entity {
             throw new IllegalArgumentException("ResultSet is null");
         }
 
-        this.setEmployeeId(rs.getInt("manage_id"));
+        this.setEmployeeId(rs.getInt("employee_id"));
         this.setCode(rs.getString("code"));
         this.setMaxDiscount(rs.getInt("max_discount"));
         this.setMinApply(rs.getInt("min_apply"));

@@ -1,9 +1,18 @@
 package eco.app.helper;
 
+import eco.app.dao.BrandDao;
+import eco.app.dao.CategoryDao;
+import eco.app.entity.Brand;
+import eco.app.entity.Category;
 import eco.app.entity.Employee;
+import eco.app.entity.EntityHelper;
 import eco.app.event.ValidateActionAdapter;
 import eco.app.myswing.TextFieldCustom;
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,8 +33,23 @@ public class ShareData {
         }
 
     };
-
+   
     public static Employee USER_LOGIN;
+
+    public static List<Category> CATEGORIES;
+    public static List<Brand> BRANDS;
+    
+    static {
+
+        try {
+            CATEGORIES = new CategoryDao().getAll();
+            BRANDS = new BrandDao().getAll();
+            
+        } catch (Exception ex) {
+            Logger.getLogger(ShareData.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 
 //    static {
 //        try {

@@ -1,18 +1,28 @@
 package eco.app.dao;
 
+import eco.app.entity.Customer;
 import eco.app.entity.Entity;
 import eco.app.entity.EntityHelper;
 import eco.app.entity.Order;
+import eco.app.entity.OrderDetail;
+import eco.app.entity.Product.BillItem;
+import eco.app.entity.Voucher;
 import eco.app.helper.DatabaseHelper;
+import eco.app.helper.ShareData;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author ThinhNQ
  */
 public class OrderDao extends EntityDao {
+
+    private int idNewOrder = 0;
 
     private List<Order> readResultSet(ResultSet rs) throws Exception {
         List<Order> orders = new ArrayList<>();
@@ -30,15 +40,7 @@ public class OrderDao extends EntityDao {
 
     @Override
     public boolean update(Entity e) throws Exception {
-        /*
-         * UPDATE [dbo].[Order]
-         * SET [employee_id] = <employee_id, int,>
-         * ,[voucher_id] = <voucher_id, int,>
-         * ,[customer_id] = <customer_id, int,>
-         * ,[time_create] = <time_create, datetime,>
-         * WHERE <Search Conditions,,>
-         */
-
+        validate(e);
         String sql = "UPDATE [dbo].[Order]"
                 + " SET "
                 + " employee_id = ?,"
@@ -57,22 +59,52 @@ public class OrderDao extends EntityDao {
 
     }
 
+    public Order findById(int id) throws Exception {
+        String sql = "SELECT * FROM dbo.[Order] WHERE id = ?";
+
+        ResultSet rs = DatabaseHelper.excuteQuery(sql, id);
+
+        if (!rs.next()) {
+            return null;
+        }
+
+        Order order = new Order();
+
+        order.readResultSet(rs);
+
+        return order;
+
+    }
+
     @Override
     public boolean delete(Entity e) throws Exception {
-        String sql = "DELETE FROM [dbo].[Order] WHERE id = ?";
+        validate(e);
+        String sql = "EXEC dbo.p_delete_order @id = ?";
         Object[] obj = EntityHelper.getData(e, "id");
         return DatabaseHelper.excuteUpdate(sql, obj);
     }
 
     @Override
     public boolean insert(Entity e) throws Exception {
-        String sql = "INSERT INTO [dbo].[Order] (employee_id, voucher_id, customer_id, time_create) VALUES (?,?,?,?)";
+        validate(e);
+        String sql = "EXEC dbo.p_insert_order  ?, ?, ?";
         Object[] obj = EntityHelper.getData(e,
                 "employeeId",
                 "voucherId",
-                "customerId",
-                "timeCreate");
-        return DatabaseHelper.excuteUpdate(sql, obj);
+                "customerId");
+
+        obj[1] = (int) obj[1] == 0 ? null : obj[1];
+        obj[2] = (int) obj[2] == 0 ? null : obj[2];
+
+        ResultSet rs = DatabaseHelper.excuteQuery(sql, obj);
+
+        if (rs.next()) {
+            idNewOrder = rs.getInt("id");
+            return idNewOrder != 0;
+        } else {
+            return false;
+        }
+
     }
 
     @Override
@@ -84,6 +116,76 @@ public class OrderDao extends EntityDao {
         if (!(e instanceof Order)) {
             throw new Exception("Entity is not Order");
         }
+    }
+
+    private void destroyNewOrder() throws Exception {
+        if (idNewOrder == 0) {
+            return;
+        }
+        Order order = new Order();
+        order.setId(idNewOrder);
+        delete(order);
+        System.out.println("Xoá " + idNewOrder);
+    }
+
+    public Order createOrder(Customer customer, Voucher voucher, List<BillItem> items) throws Exception {
+        boolean isSuccess = true;
+        try {
+
+            Order order = new Order();
+
+            order.setEmployeeId(ShareData.USER_LOGIN.getId());
+            if (customer != null) {
+                order.setCustomerId(customer.getId());
+            }
+
+            if (voucher != null) {
+                order.setVoucherId(voucher.getId());
+            }
+
+            if (insert(order)) {
+
+                System.out.println("Tạo hoá đơn thành công " + idNewOrder);
+
+                OrderDetailDao dao = new OrderDetailDao();
+
+                for (BillItem item : items) {
+                    OrderDetail detail = new OrderDetail();
+
+                    detail.setOrderId(idNewOrder);
+                    detail.setProductId(item.getProduct().getId());
+                    detail.setQuantity(item.getQuantity());
+
+                    
+                    
+                    if (!dao.insert(detail)) {
+                        isSuccess = false;
+                        break;
+                    }
+                }
+            } else {
+                System.out.println("Tạo hoá đơn thất bại");
+                isSuccess = false;
+            }
+
+        } catch (Exception e) {
+            isSuccess = false;
+            throw e;
+        } finally {
+            if (!isSuccess) {
+                try {
+                    destroyNewOrder();
+                } catch (Exception ex) {
+                    throw new Exception("Can't destroy new order");
+                }
+            }
+        }
+
+        if (isSuccess) {
+            return findById(idNewOrder);
+        }
+        return null;
+
     }
 
 }

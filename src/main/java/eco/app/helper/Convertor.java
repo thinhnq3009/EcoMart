@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 public class Convertor {
 
     public static SimpleDateFormat formator = new SimpleDateFormat(SaveData.PATTENT);
+    public static SimpleDateFormat formatorDateTime = new SimpleDateFormat(SaveData.PATTENT_DATETIME);
 
     public static String dateToString(Date date) {
         return formator.format(date);
@@ -46,18 +47,23 @@ public class Convertor {
         }
     }
 
+    public static String dateTimeToString(Date date) {
+        return formatorDateTime.format(date);
+    }
+
     /**
      * FORMAT STRING
      *
      * @param str 1 chuỗi các số
      * @return
      */
-    public static String toCurency(String str) {
+    public static String formatCurrency(String str) {
         return str.replaceAll("(\\d)(?=(\\d{3})+(?!\\d))", "$1.");
     }
 
-    public static String toCurency(int c) {
+    public static String formatCurrency(int c) {
         String str = c + "";
         return str.replaceAll("(\\d)(?=(\\d{3})+(?!\\d))", "$1.");
     }
+
 }

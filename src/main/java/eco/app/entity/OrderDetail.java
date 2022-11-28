@@ -16,7 +16,6 @@ public class OrderDetail extends Entity {
     protected int orderId;
     protected int productId;
     protected int quantity;
-    protected String note;
 
     public OrderDetail() {
     }
@@ -47,14 +46,6 @@ public class OrderDetail extends Entity {
         this.quantity = quantity;
     }
 
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
     @Override
     public void readResultSet(ResultSet rs) throws Exception {
         /*
@@ -73,8 +64,6 @@ public class OrderDetail extends Entity {
         this.orderId = rs.getInt("order_id");
         this.productId = rs.getInt("product_id");
         this.quantity = rs.getInt("quantity");
-        this.note = rs.getString("note");
-
     }
 
 }

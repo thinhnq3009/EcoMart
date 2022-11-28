@@ -50,13 +50,12 @@ public class OrderDetailDao extends EntityDao {
 
     @Override
     public boolean insert(Entity e) throws Exception {
-        String sql = "INSERT INTO [dbo].[Order_Detail] (order_id, product_id, quantity, note)"
-                + " VALUES (?,?,?,?)";
+        String sql = "INSERT INTO [dbo].[Order_Detail] (order_id, product_id, quantity)"
+                + " VALUES (?,?,?)";
         Object[] obj = EntityHelper.getData(e,
                 "orderId",
                 "productId",
-                "quantity",
-                "note");
+                "quantity");
         return DatabaseHelper.excuteUpdate(sql, obj);
     }
 

@@ -52,7 +52,7 @@ public class VoucherDao extends EntityDao {
 
     public List<Voucher> findByCode(String code) throws Exception {
 
-        String sql = "SELECT * FROM Voucher WHERE code = ?";
+        String sql = "SELECT * FROM Voucher WHERE code = ? AND is_used = 0";
 
         ResultSet rs = DatabaseHelper.excuteQuery(sql, code);
 

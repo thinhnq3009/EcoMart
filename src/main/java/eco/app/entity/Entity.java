@@ -24,4 +24,11 @@ public abstract class Entity {
 
     public abstract void readResultSet(ResultSet rs) throws Exception;
 
+    @Override
+    public String toString() {
+        return  this.getClass().getName() + " " + getId();
+    }
+
+    
+    
 }

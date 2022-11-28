@@ -6,6 +6,7 @@ package eco.app.entity;
 
 import eco.app.dao.BrandDao;
 import eco.app.dao.CategoryDao;
+import eco.app.helper.ShareData;
 import java.sql.ResultSet;
 import java.util.Date;
 
@@ -15,7 +16,6 @@ import java.util.Date;
  */
 public class Product extends Entity {
 
-    
     protected int categoryId;
     protected int employeeId;
     protected int brandId;
@@ -30,31 +30,16 @@ public class Product extends Entity {
     protected String description;
     protected String discountText;
     protected String note;
-    
+
     public Category getCategory() {
-        try {
-            return categoryId == 0
-                    ? null
-                    : new CategoryDao().getById(categoryId);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
+        return (Category) EntityHelper.find(ShareData.CATEGORIES, categoryId);
 
     }
 
     public Brand getBrand() {
-        try {
-            return brandId == 0
-                    ? null
-                    : new BrandDao().findById(brandId).get(0);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
+        return (Brand) EntityHelper.find(ShareData.BRANDS, brandId);
 
-  
+    }
 
     public int getCategoryId() {
         return categoryId;
@@ -211,6 +196,47 @@ public class Product extends Entity {
 
     }
 
-  
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Product product) {
+            return product.getId() == this.getId();
+        }
+        return super.equals(obj);
 
+    }
+
+    public static class BillItem {
+
+        private Product product;
+        private int quantity;
+
+        public BillItem(Product product, int quantity) {
+            this.product = product;
+            this.quantity = quantity;
+        }
+
+        public int getTotal() {
+            return getProduct().getPrice() * getQuantity();
+        }
+
+        public void append(int quantity) {
+            this.setQuantity(this.getQuantity() + quantity);
+        }
+
+        public Product getProduct() {
+            return product;
+        }
+
+        public void setProduct(Product product) {
+            this.product = product;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+    }
 }

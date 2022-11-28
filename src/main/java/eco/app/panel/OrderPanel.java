@@ -5,18 +5,33 @@
 package eco.app.panel;
 
 import eco.app.component.ProductItem;
-import eco.app.dao.BrandDao;
-import eco.app.dao.CategoryDao;
+import eco.app.dao.OrderDao;
 import eco.app.dao.ProductDao;
+import eco.app.dao.VoucherDao;
+import eco.app.dialog.BillPreview;
+import eco.app.dialog.SearchCustomer;
 import eco.app.entity.Brand;
 import eco.app.entity.Category;
+import eco.app.entity.Customer;
+import eco.app.entity.EntityHelper;
+import eco.app.entity.Order;
 import eco.app.entity.Product;
+import eco.app.entity.Product.BillItem;
+import eco.app.entity.Voucher;
+import eco.app.event.ProductItemListener;
+import eco.app.helper.Convertor;
 import eco.app.helper.MessageHelper;
 import eco.app.helper.SaveData;
+import eco.app.helper.ShareData;
 import eco.app.myswing.ScrollBarCustom;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -25,36 +40,33 @@ import net.miginfocom.swing.MigLayout;
  */
 public class OrderPanel extends javax.swing.JPanel {
 
-    private class OrderItem {
-        Product product;
-        int quantity;
-
-        public OrderItem(Product product, int quantity) {
-            this.product = product;
-            this.quantity = quantity;
-        }
-        
-        public int getTotal() {
-            return product.getPrice() * quantity;
-        }
-    }
-
-    
     /**
      * Creates new form OrderPanel
      */
     private MigLayout layout = new MigLayout("fill", "0[]10[]0", "0[]0");
     private List<Product> products;
-    private List<OrderItem> productsSelected;
-
+    private List<BillItem> productsInBill;
+    private ProductItemListener itemListener;
+    
+    private Customer customer;
+    private Voucher voucher;
+    
+    private int idBrandFiller = 0;
+    private int idCategoryFiller = 0;
+    private int totalBill = 0;
+    
     public OrderPanel() {
         initComponents();
         init();
     }
-
+    
     private void init() {
-        setBackground(new Color(255, 153, 102));
 
+        // Initialize variables
+        productsInBill = new java.util.ArrayList<>();
+        
+        setBackground(new Color(255, 153, 102));
+        
         setLayout(layout);
         add(pnFindProduct, "w 720!, h 100%");
         add(pnOrder, "w 100%, h 100%");
@@ -64,56 +76,165 @@ public class OrderPanel extends javax.swing.JPanel {
         sbc.setForeground(new Color(0, 102, 255));
         sbc.setBackground(scProduct.getBackground());
         scProduct.setVerticalScrollBar(sbc);
-        scProduct.setHorizontalScrollBar(sbc);
 
         //
         pnListProduct.setLayout(new MigLayout("fillx, insets ", "0[]0", "[]5[]"));
-
+        
+        initProductItemEvent();
         getAllProduct();
         fillComboBox();
-
     }
-
+    
+    private void initProductItemEvent() {
+        itemListener = new ProductItemListener() {
+            @Override
+            public void onClick(Product product, JTextField textField) {
+                
+                try {
+                    int quantity = Integer.parseInt(textField.getText());
+                    
+                    BillItem item = new BillItem(product, quantity);
+                    
+                    for (BillItem billItem : productsInBill) {
+                        if (product.equals(billItem.getProduct())) {
+                            billItem.append(quantity);
+                            reloadBill();
+                            return;
+                        }
+                    }
+                    productsInBill.add(item);
+                    reloadBill();
+                    
+                } catch (NumberFormatException e) {
+                    MessageHelper.showException(OrderPanel.this, e);
+                }
+                
+            }
+        };
+        
+    }
+    
     private void fillComboBox() {
         try {
-            BrandDao brandDao = new BrandDao();
-            List<Brand> brands = brandDao.getAll();
+            List<Brand> brands = ShareData.BRANDS;
             DefaultComboBoxModel brandModel = (DefaultComboBoxModel) cbbBrand.getModel();
             for (Brand brand : brands) {
                 brandModel.addElement(brand);
             }
-
-            CategoryDao categoryDao = new CategoryDao();
-            List<Category> categories = categoryDao.getAll();
+            
+            List<Category> categories = ShareData.CATEGORIES;
             DefaultComboBoxModel categoryModel = (DefaultComboBoxModel) cbbCategory.getModel();
             for (Category category : categories) {
                 categoryModel.addElement(category);
             }
-
+            
         } catch (Exception e) {
             MessageHelper.showException(this, e);
         }
     }
-
+    
+    private void reloadBill() {
+        DefaultTableModel model = (DefaultTableModel) tblBill.getModel();
+        model.setRowCount(0);
+        for (BillItem item : productsInBill) {
+            model.addRow(new Object[]{
+                item.getProduct().getName(),
+                item.getQuantity(),
+                item.getProduct().getPrice(),
+                item.getTotal()
+            });
+            totalBill += item.getTotal();
+        }
+        
+        totalBill -= voucher == null ? 0 : voucher.getDiscount(totalBill);
+        
+        totalBill = totalBill < 0 ? 0 : totalBill;
+        
+        txtTotal.setText(Convertor.formatCurrency(totalBill) + " VND");
+    }
+    
     private void getAllProduct() {
         try {
-
+            
             ProductDao dao = new ProductDao();
-
+            
             products = dao.getAll();
-
+            
             for (Product product : products) {
+                System.out.println(Arrays.toString(EntityHelper.getData(product, "id", "name")));
                 addProduct(product);
             }
-
+            
         } catch (Exception e) {
             MessageHelper.showException(this, e);
         }
     }
-
+    
     public void addProduct(Product product) {
         ProductItem item = new ProductItem(product);
         pnListProduct.add(item, "wrap, w 100%");
+        item.addPlusListener(itemListener);
+        revalidate();
+        repaint();
+    }
+    
+    private void completeOrder() {
+        try {
+            
+            OrderDao dao = new OrderDao();
+            
+            Order order = dao.createOrder(customer, voucher, productsInBill);
+            
+            if (order != null) {
+                BillPreview previewDialog = new BillPreview(null, true);
+                
+                previewDialog.setOrder(order);
+                previewDialog.setBillItems(productsInBill);
+                previewDialog.setVoucher(voucher);
+                
+                previewDialog.setVisible(true);
+                
+            } else {
+                
+            }
+            
+        } catch (Exception e) {
+            MessageHelper.showException(this, e);
+        }
+        clearOrder(null);
+    }
+    
+    private void updateVoucherField() {
+        try {
+            String code = txtVoucher.getText();
+            
+            if (code.isBlank()) {
+                return;
+            }
+            
+            VoucherDao dao = new VoucherDao();
+            
+            List<Voucher> vouchers = dao.findByCode(code);
+            
+            if (!vouchers.isEmpty()) {
+                voucher = vouchers.get(0);
+                txtVoucher.setLineColor(SaveData.BTN_SUCCESS);
+                txtVoucher.setText(voucher.getCode());
+                
+                String discount = Convertor.formatCurrency((int) voucher.getDiscount(totalBill));
+                txtDiscount.setText(discount + " VND");
+            } else {
+                voucher = null;
+                txtVoucher.setLineColor(SaveData.BTN_DANGER);
+                txtDiscount.setText("0 VND");
+                txtVoucher.setFocusable(true);
+            }
+            
+            reloadBill();
+            
+        } catch (Exception e) {
+            MessageHelper.showException(this, e);
+        }
     }
 
     /**
@@ -122,6 +243,9 @@ public class OrderPanel extends javax.swing.JPanel {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -138,14 +262,14 @@ public class OrderPanel extends javax.swing.JPanel {
         pnOrder = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblSelectedProduct = new eco.app.myswing.TableCustom();
+        tblBill = new eco.app.myswing.TableCustom();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         txtCustomer = new eco.app.myswing.TextFieldCustom();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        txtVoncher = new eco.app.myswing.TextFieldCustom();
+        txtVoucher = new eco.app.myswing.TextFieldCustom();
         jPanel6 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         txtDiscount = new eco.app.myswing.TextFieldCustom();
@@ -154,7 +278,7 @@ public class OrderPanel extends javax.swing.JPanel {
         txtTotal = new eco.app.myswing.TextFieldCustom();
         jPanel3 = new javax.swing.JPanel();
         btnDelete = new eco.app.myswing.ButtonRandius();
-        btnSave = new eco.app.myswing.ButtonRandius();
+        btnClear = new eco.app.myswing.ButtonRandius();
         btnComplete = new eco.app.myswing.ButtonRandius();
 
         pnFindProduct.setBackground(SaveData.BG_CONTENT );
@@ -162,6 +286,11 @@ public class OrderPanel extends javax.swing.JPanel {
         jPanel2.setOpaque(false);
 
         txtFind.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txtFind.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFindKeyReleased(evt);
+            }
+        });
 
         btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eco/app/icon/icons8_sync_25px.png"))); // NOI18N
         btnReload.setText("Reload");
@@ -180,6 +309,16 @@ public class OrderPanel extends javax.swing.JPanel {
         cboCategory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         cboCategory.setText("Category: ");
 
+        cbbCategory.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All" }));
+        cbbCategory.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        cbbCategory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbCategoryActionPerformed(evt);
+            }
+        });
+
+        cbbBrand.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All" }));
+        cbbBrand.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         cbbBrand.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbbBrandActionPerformed(evt);
@@ -209,7 +348,7 @@ public class OrderPanel extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnReload, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
+                    .addComponent(btnReload, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -223,19 +362,17 @@ public class OrderPanel extends javax.swing.JPanel {
                         .addContainerGap())))
         );
 
-        scProduct.setForeground(new java.awt.Color(204, 204, 255));
-
-        pnListProduct.setBackground(new java.awt.Color(204, 204, 255));
+        pnListProduct.setOpaque(false);
 
         javax.swing.GroupLayout pnListProductLayout = new javax.swing.GroupLayout(pnListProduct);
         pnListProduct.setLayout(pnListProductLayout);
         pnListProductLayout.setHorizontalGroup(
             pnListProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 629, Short.MAX_VALUE)
+            .addGap(0, 741, Short.MAX_VALUE)
         );
         pnListProductLayout.setVerticalGroup(
             pnListProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 209, Short.MAX_VALUE)
+            .addGap(0, 188, Short.MAX_VALUE)
         );
 
         scProduct.setViewportView(pnListProduct);
@@ -244,9 +381,9 @@ public class OrderPanel extends javax.swing.JPanel {
         pnFindProduct.setLayout(pnFindProductLayout);
         pnFindProductLayout.setHorizontalGroup(
             pnFindProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnFindProductLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnFindProductLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnFindProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnFindProductLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(scProduct)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -256,7 +393,7 @@ public class OrderPanel extends javax.swing.JPanel {
             .addGroup(pnFindProductLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scProduct)
                 .addContainerGap())
         );
@@ -272,18 +409,15 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Order Detail");
 
-        tblSelectedProduct.setModel(new javax.swing.table.DefaultTableModel(
+        tblBill.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Product", "Quantity", "Price", "Total"
             }
         ));
-        jScrollPane1.setViewportView(tblSelectedProduct);
+        jScrollPane1.setViewportView(tblBill);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
         jPanel1.setOpaque(false);
@@ -299,9 +433,15 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel3.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel4.add(jLabel3, java.awt.BorderLayout.LINE_START);
 
+        txtCustomer.setEditable(false);
         txtCustomer.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtCustomer.setText("Nguyen Van A");
+        txtCustomer.setText("Click to select customer");
         txtCustomer.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtCustomer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtCustomerMouseClicked(evt);
+            }
+        });
         jPanel4.add(txtCustomer, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(jPanel4);
@@ -316,10 +456,19 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel4.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel5.add(jLabel4, java.awt.BorderLayout.LINE_START);
 
-        txtVoncher.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtVoncher.setText("SELL50%");
-        txtVoncher.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jPanel5.add(txtVoncher, java.awt.BorderLayout.CENTER);
+        txtVoucher.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtVoucher.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtVoucher.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtVoucherFocusLost(evt);
+            }
+        });
+        txtVoucher.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtVoucherKeyReleased(evt);
+            }
+        });
+        jPanel5.add(txtVoucher, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(jPanel5);
 
@@ -334,7 +483,8 @@ public class OrderPanel extends javax.swing.JPanel {
         jPanel6.add(jLabel5, java.awt.BorderLayout.LINE_START);
 
         txtDiscount.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtDiscount.setText("-30.000 VND");
+        txtDiscount.setText("-0 VND");
+        txtDiscount.setEnabled(false);
         txtDiscount.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         txtDiscount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -355,9 +505,15 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel6.setPreferredSize(new java.awt.Dimension(100, 17));
         jPanel7.add(jLabel6, java.awt.BorderLayout.LINE_START);
 
+        txtTotal.setEditable(false);
         txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtTotal.setText("149.699 VND");
+        txtTotal.setText("0 VND");
         txtTotal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        txtTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTotalActionPerformed(evt);
+            }
+        });
         jPanel7.add(txtTotal, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(jPanel7);
@@ -368,17 +524,32 @@ public class OrderPanel extends javax.swing.JPanel {
         btnDelete.setBackground(SaveData.BTN_DANGER);
         btnDelete.setText("Delete");
         btnDelete.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
         jPanel3.add(btnDelete);
 
-        btnSave.setBackground(SaveData.BTN_WARNING
+        btnClear.setBackground(SaveData.BTN_WARNING
         );
-        btnSave.setText("Save");
-        btnSave.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
-        jPanel3.add(btnSave);
+        btnClear.setText("Clear");
+        btnClear.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearOrder(evt);
+            }
+        });
+        jPanel3.add(btnClear);
 
         btnComplete.setBackground(SaveData.BTN_SUCCESS);
         btnComplete.setText("Complete");
         btnComplete.setFont(new java.awt.Font("Roboto", 3, 14)); // NOI18N
+        btnComplete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompleteActionPerformed(evt);
+            }
+        });
         jPanel3.add(btnComplete);
 
         javax.swing.GroupLayout pnOrderLayout = new javax.swing.GroupLayout(pnOrder);
@@ -413,38 +584,138 @@ public class OrderPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 798, Short.MAX_VALUE)
+            .addGap(0, 337, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 447, Short.MAX_VALUE)
+            .addGap(0, 473, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtDiscountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDiscountActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtDiscountActionPerformed
-
-    private void cbbBrandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbBrandActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbbBrandActionPerformed
-
-    private void pnOrderComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pnOrderComponentResized
-        if (pnOrder.getWidth() <= 300) {
-//            changeLayout();
+    private void clearOrder(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearOrder
+        productsInBill = new ArrayList<>();
+        customer = null;
+        voucher = null;
+        
+        txtCustomer.setText("Click to choose customer");
+        txtVoucher.setText("");
+        
+        reloadBill();
+    }//GEN-LAST:event_clearOrder
+    
+    private void txtCustomerMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_txtCustomerMouseClicked
+        SearchCustomer sc = new SearchCustomer(null, true);
+        sc.setVisible(true);
+        customer = sc.getCustomerSelected();
+        if (customer != null) {
+            String fullname = customer.getFullname();
+            int id = customer.getId();
+            
+            txtCustomer.setText("[" + id + "] " + fullname);
+        } else {
+            txtCustomer.setText("");
         }
-    }//GEN-LAST:event_pnOrderComponentResized
+        
+    }// GEN-LAST:event_txtCustomerMouseClicked
 
-    private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadActionPerformed
+    private void txtTotalActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtTotalActionPerformed
+        // TODO add your handling code here:
+    }// GEN-LAST:event_txtTotalActionPerformed
+
+    private void cbbCategoryActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cbbCategoryActionPerformed
+        Object selectedItem = cbbCategory.getSelectedItem();
+        
+        if (selectedItem instanceof Category category) {
+            idCategoryFiller = category.getId();
+        } else {
+            idCategoryFiller = 0;
+        }
+        
+        txtFindKeyReleased(null);
+        
+    }// GEN-LAST:event_cbbCategoryActionPerformed
+
+    private void txtFindKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtFindKeyReleased
+
+    }// GEN-LAST:event_txtFindKeyReleased
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnDeleteActionPerformed
+        int index = tblBill.getSelectedRow();
+        if (index != -1) {
+            productsInBill.remove(index);
+            reloadBill();
+        }
+    }// GEN-LAST:event_btnDeleteActionPerformed
+
+    private void txtVoucherFocusLost(java.awt.event.FocusEvent evt) {// GEN-FIRST:event_txtVoucherFocusLost
+        // try {
+        // String code = txtVoncher.getText();
+        //
+        // if (code.isBlank()) {
+        // return;
+        // }
+        //
+        // VoucherDao dao = new VoucherDao();
+        //
+        // List<Voucher> vouchers = dao.findByCode(code);
+        //
+        // if (!vouchers.isEmpty()) {
+        // voucher = vouchers.get(0);
+        // txtVoncher.setLineColor(SaveData.BTN_SUCCESS);
+        // txtVoncher.setText(voucher.getCode());
+        //
+        // String discount = Convertor.formatCurrency((int) voucher.getDiscount());
+        // txtDiscount.setText(discount + " VND");
+        // } else {
+        // txtVoncher.setLineColor(SaveData.BTN_DANGER);
+        // txtDiscount.setText("0 VND");
+        // txtVoncher.setFocusable(true);
+        // }
+        //
+        // } catch (Exception e) {
+        // MessageHelper.showException(this, e);
+        // }
+    }// GEN-LAST:event_txtVoucherFocusLost
+
+    private void txtVoucherKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtVoucherKeyReleased
+        updateVoucherField();
+    }// GEN-LAST:event_txtVoucherKeyReleased
+
+    private void btnCompleteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCompleteActionPerformed
+        completeOrder();
+    }// GEN-LAST:event_btnCompleteActionPerformed
+
+    private void txtDiscountActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtDiscountActionPerformed
+        // TODO add your handling code here:
+    }// GEN-LAST:event_txtDiscountActionPerformed
+
+    private void cbbBrandActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cbbBrandActionPerformed
+        Object selectedItem = cbbBrand.getSelectedItem();
+        
+        if (selectedItem instanceof Brand brand) {
+            idBrandFiller = brand.getId();
+        } else {
+            idBrandFiller = 0;
+        }
+        
+        txtFindKeyReleased(null);
+    }// GEN-LAST:event_cbbBrandActionPerformed
+
+    private void pnOrderComponentResized(java.awt.event.ComponentEvent evt) {// GEN-FIRST:event_pnOrderComponentResized
+        if (pnOrder.getWidth() <= 300) {
+            // changeLayout();
+        }
+    }// GEN-LAST:event_pnOrderComponentResized
+
+    private void btnReloadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnReloadActionPerformed
         getAllProduct();
-    }//GEN-LAST:event_btnReloadActionPerformed
-
+    }// GEN-LAST:event_btnReloadActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private eco.app.myswing.ButtonRandius btnClear;
     private eco.app.myswing.ButtonRandius btnComplete;
     private eco.app.myswing.ButtonRandius btnDelete;
     private eco.app.myswing.ButtonRandius btnReload;
-    private eco.app.myswing.ButtonRandius btnSave;
     private eco.app.myswing.ComboBoxCustom cbbBrand;
     private eco.app.myswing.ComboBoxCustom cbbCategory;
     private javax.swing.JLabel cboCategory;
@@ -466,11 +737,11 @@ public class OrderPanel extends javax.swing.JPanel {
     private javax.swing.JPanel pnListProduct;
     private javax.swing.JPanel pnOrder;
     private javax.swing.JScrollPane scProduct;
-    private eco.app.myswing.TableCustom tblSelectedProduct;
+    private eco.app.myswing.TableCustom tblBill;
     private eco.app.myswing.TextFieldCustom txtCustomer;
     private eco.app.myswing.TextFieldCustom txtDiscount;
     private eco.app.myswing.TextFieldCustom txtFind;
     private eco.app.myswing.TextFieldCustom txtTotal;
-    private eco.app.myswing.TextFieldCustom txtVoncher;
+    private eco.app.myswing.TextFieldCustom txtVoucher;
     // End of variables declaration//GEN-END:variables
 }

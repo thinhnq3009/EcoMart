@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class ProductDao extends EntityDao {
 
+
+
     private List<Product> readResultSet(ResultSet rs) throws Exception {
         List<Product> products = new ArrayList<>();
 
@@ -31,7 +33,7 @@ public class ProductDao extends EntityDao {
 
     public List<Product> getAll() throws Exception {
 
-        String sql = "SELECT * FROM Product";
+        String sql = "SELECT * FROM v_product";
 
         ResultSet rs = DatabaseHelper.excuteQuery(sql);
 
@@ -41,7 +43,7 @@ public class ProductDao extends EntityDao {
 
     public List<Product> findById(int id) throws Exception {
 
-        String sql = "SELECT * FROM Product WHERE id = ?";
+        String sql = "SELECT * FROM v_product WHERE id = ?";
 
         ResultSet rs = DatabaseHelper.excuteQuery(sql, id);
 
@@ -51,7 +53,7 @@ public class ProductDao extends EntityDao {
 
     public List<Product> findByName(String name) throws Exception {
 
-        String sql = "SELECT * FROM Product WHERE name = ?";
+        String sql = "SELECT * FROM v_product WHERE name = ?";
 
         ResultSet rs = DatabaseHelper.excuteQuery(sql, name);
 
@@ -61,7 +63,7 @@ public class ProductDao extends EntityDao {
 
     public List<Product> findByPrice(double price) throws Exception {
 
-        String sql = "SELECT * FROM Product WHERE price = ?";
+        String sql = "SELECT * FROM v_product WHERE price = ?";
 
         ResultSet rs = DatabaseHelper.excuteQuery(sql, price);
 
@@ -88,7 +90,6 @@ public class ProductDao extends EntityDao {
                 + " brand_id = ?,"
                 + " name = ?,"
                 + " quantity = ?,"
-                + " sold = ?,"
                 + " discount = ?,"
                 + " time_add = ?,"
                 + " expiry = ?,"
@@ -103,7 +104,6 @@ public class ProductDao extends EntityDao {
                 "brandId",
                 "name",
                 "quantity",
-                "sold",
                 "discount",
                 "timeAdd",
                 "expiry",
@@ -126,15 +126,14 @@ public class ProductDao extends EntityDao {
     @Override
     public boolean insert(Entity e) throws Exception {
         String sql = "INSERT INTO Product"
-                + " (category_id, employee_id, brand_id, name, quantity, sold, discount, time_add, expiry,price, image, description, note)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
+                + " (category_id, employee_id, brand_id, name, quantity, discount, time_add, expiry,price, image, description, note)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
         Object[] obj = EntityHelper.getData(e,
                 "categoryId",
                 "employeeId",
                 "brandId",
                 "name",
                 "quantity",
-                "sold",
                 "discount",
                 "timeAdd",
                 "expiry",

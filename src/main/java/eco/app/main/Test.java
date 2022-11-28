@@ -5,6 +5,7 @@
 package eco.app.main;
 
 import eco.app.component.Profile;
+import eco.app.dialog.BillPreview;
 import eco.app.event.LinkEventAdapter;
 import eco.app.event.ValidateActionAdapter;
 import eco.app.helper.ImageHelper;
@@ -29,6 +30,8 @@ public class Test extends javax.swing.JFrame {
     public Test() {
         initComponents();
        
+        
+        
     }
 
     /**
@@ -45,8 +48,7 @@ public class Test extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(45, 174, 253));
 
-        buttonRandius1.setText("Open");
-        buttonRandius1.setRound(60);
+        buttonRandius1.setText("buttonRandius1");
         buttonRandius1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonRandius1ActionPerformed(evt);
@@ -58,33 +60,22 @@ public class Test extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(133, 133, 133)
-                .addComponent(buttonRandius1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(146, Short.MAX_VALUE))
+                .addGap(130, 130, 130)
+                .addComponent(buttonRandius1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(156, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(107, 107, 107)
-                .addComponent(buttonRandius1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(109, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(121, Short.MAX_VALUE)
+                .addComponent(buttonRandius1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(114, 114, 114))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonRandius1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRandius1ActionPerformed
-        JnaFileChooser chooser = new JnaFileChooser();
-        
-        boolean select = chooser.showOpenDialog(this);
-        
-        if (select) {
-            System.out.println(chooser.getSelectedFile());
-        } else {
-            System.out.println("Thoat");
-        }
-        
-
     }//GEN-LAST:event_buttonRandius1ActionPerformed
 
     /**

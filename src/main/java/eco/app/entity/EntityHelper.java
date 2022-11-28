@@ -37,7 +37,6 @@ public class EntityHelper {
             for (Field field : fields) {
                 try {
                     value[counter] = field.get(e);
-                    System.out.println(field.getName() + " " + field.get(e));
                 } catch (IllegalAccessException | IllegalArgumentException er) {
                     value[counter] = "Can't get";
                 } finally {

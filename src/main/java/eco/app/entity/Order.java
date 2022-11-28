@@ -13,13 +13,20 @@ import java.util.Date;
  */
 public class Order extends Entity {
 
-    
     protected int employeeId;
     protected int voucherId;
     protected int customerId;
     protected Date timeCreate;
 
-  
+    public Order() {
+    }
+
+    public Order(int employeeId, int voucherId, int customerId, Date timeCreate) {
+        this.employeeId = employeeId;
+        this.voucherId = voucherId;
+        this.customerId = customerId;
+        this.timeCreate = timeCreate;
+    }
 
     public int getEmployeeId() {
         return employeeId;

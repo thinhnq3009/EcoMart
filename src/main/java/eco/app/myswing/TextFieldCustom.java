@@ -7,6 +7,7 @@ package eco.app.myswing;
 import eco.app.event.ValidateActionAdapter;
 import eco.app.helper.SaveData;
 import eco.app.swing.effect.RippleEffect;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -16,6 +17,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import org.jdesktop.animation.timing.Animator;
@@ -34,7 +37,9 @@ public class TextFieldCustom extends JTextField {
     private float fraction;
     private boolean isFocus = false;
     private RippleEffect rippleEffect = new RippleEffect(this);
-
+    private Color lineColor = SaveData.TXT_UNDER_LINE;
+    
+    
     // Text field validate data
     private String reg = "";
     private ValidateActionAdapter validateAction;
@@ -71,7 +76,7 @@ public class TextFieldCustom extends JTextField {
 
         int w = getWidth();
         int h = getHeight();
-        g2.setColor(SaveData.TXT_UNDER_LINE);
+        g2.setColor(getLineColor());
         double size = 0;
 
         if ((!animator.isRunning() && mouseIn)
@@ -130,6 +135,11 @@ public class TextFieldCustom extends JTextField {
         animator.setAcceleration(0.5f);
         animator.setDeceleration(0.5f);
     }
+    
+    private void start() throws Exception {
+        animator.start();
+        throw new Exception("...");
+    }
 
     private void focusEffect() {
         addFocusListener(new FocusAdapter() {
@@ -138,7 +148,10 @@ public class TextFieldCustom extends JTextField {
 
                 isFocus = true;
                 if (!mouseIn) {
-                    animator.start();
+                    try {
+                        start();
+                    } catch (Exception ex) {
+                    }
                 }
                 repaint();
             }
@@ -172,6 +185,14 @@ public class TextFieldCustom extends JTextField {
 
     public void setRegex(String reg) {
         this.reg = reg;
+    }
+
+    public Color getLineColor() {
+        return lineColor;
+    }
+
+    public void setLineColor(Color lineColor) {
+        this.lineColor = lineColor;
     }
 
     public void setValidateAction(ValidateActionAdapter validateAction) {

@@ -215,7 +215,7 @@ public class ProductPanel extends javax.swing.JPanel {
     
     private void loadComboBox() {
         try {
-            // Load brand
+            // Load BRANDS
             brands = new BrandDao().getAll();
             DefaultComboBoxModel brandModel = new DefaultComboBoxModel();
             for (Brand br : brands) {
@@ -224,7 +224,7 @@ public class ProductPanel extends javax.swing.JPanel {
             cbBrand.setModel(brandModel);
 
             // Load category
-            categories = new CategoryDao().getAll();
+            categories = ShareData.CATEGORIES;
             DefaultComboBoxModel categoryModel = new DefaultComboBoxModel();
             for (Category ct : categories) {
                 categoryModel.addElement(ct);
@@ -311,7 +311,7 @@ public class ProductPanel extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 
                 String name = txtName.getText();
-                String price = Convertor.toCurency(txtPrice.getText());
+                String price = Convertor.formatCurrency(txtPrice.getText());
                 String brand = cbBrand.getSelectedItem().toString();
                 String category = cbCategory.getSelectedItem().toString();
 
